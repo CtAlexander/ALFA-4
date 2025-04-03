@@ -1,125 +1,125 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alfa 4</title>
-    <style>
-        body {
-            font-family: 'Roboto', Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background: linear-gradient(to bottom, #2c2c2c, #1f1f1f);
-            color: #e0e0e0;
-            overflow-x: hidden;
-            position: relative;
-        }
-        header {
-            text-align: center;
-            padding: 2rem 0;
-            background: #1f1f1f;
-            color: #00e676;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
-        }
-        header h1 {
-            font-size: 3.5rem;
-            margin: 0;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-        }
-        .wave-background {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at center, rgba(0, 230, 118, 0.3), transparent 80%);
-            opacity: 0.3;
-            pointer-events: none;
-            z-index: -1;
-        }
-        main {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 2rem;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
-        }
-        section {
-            margin-bottom: 2rem;
-        }
-        h2 {
-            color: #00e676;
-            text-transform: uppercase;
-            font-size: 2.5rem;
-            border-bottom: 2px solid #00e676;
-            padding-bottom: 0.5rem;
-        }
-        p, ul {
-            font-size: 1.2rem;
-            line-height: 1.8;
-        }
-        ul {
-            list-style: none;
-            padding: 0;
-        }
-        ul li {
-            background: #00e676;
-            padding: 1rem;
-            margin-bottom: 0.5rem;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-            color: #1f1f1f;
-            font-weight: bold;
-        }
-        ul li:hover {
-            background: #66ffa6;
-        }
-        .contact {
-            font-size: 1.5rem;
-            margin-top: 2rem;
-            color: #00e676;
-            text-align: center;
-        }
-        footer {
-            text-align: center;
-            padding: 1.5rem 0;
-            background: #1f1f1f;
-            color: #e0e0e0;
-            margin-top: 2rem;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Registro Operador - OPL</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #1F3B73 0%, #2C82C9 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: white;
+    }
+    .form-container {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.3);
+      text-align: center;
+      width: 300px;
+    }
+    h2 {
+      margin-bottom: 20px;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 6px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 15px;
+      background-color: #FFC107;
+      color: black;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-    <div class="wave-background"></div>
-    <header>
-        <h1>Alfa 4</h1>
-    </header>
-    <main>
-        <section>
-            <h2>Sobre Nosotros</h2>
-            <p>En Alfa 4 nos dedicamos a crear soluciones tecnológicas innovadoras para empresas de todos los sectores. Nuestro objetivo es proporcionar herramientas digitales avanzadas que optimicen procesos y mejoren la eficiencia.</p>
-        </section>
-        <section>
-            <h2>Nuestros Servicios</h2>
-            <ul>
-                <li>Desarrollo de plataformas personalizadas para empresas de todos los sectores inteligencia artificial.</li>
-                <li>Creación de páginas web modernas y funcionales.</li>
-                <li>Desarrollo de aplicaciones de inteligencia artificial adaptadas a las necesidades de nuestros clientes.</li>
-                <li>Consultoría tecnológica para implementar soluciones digitales en empresas.</li>
-            </ul>
-        </section>
-        <section>
-            <h2>¿Qué Hacemos?</h2>
-            <p>En Alfa 4 diseñamos y desarrollamos soluciones digitales para transformar la forma en que las empresas operan. Desde plataformas web hasta sistemas basados en inteligencia artificial, trabajamos para que cada proyecto sea único y exitoso.</p>
-        </section>
-        <div class="contact">
-            <p>Contáctanos al: <strong>5614577108</strong></p>
-        </div>
-    </main>
-    <footer>
-        <p>&copy; 2025 Alfa 4 - Todos los derechos reservados.</p>
-    </footer>
+  <div class="form-container">
+    <h2>Registro Operador</h2>
+    <input type="text" id="numeroEmpleado" placeholder="Número de empleado" />
+    <input type="text" id="nombre" placeholder="Nombre completo" />
+    <input type="password" id="password" placeholder="Contraseña" />
+    <select id="puesto">
+      <option value="Operador">Operador</option>
+      <option value="Supervisor">Supervisor</option>
+      <option value="Gerente">Gerente</option>
+    </select>
+    <button onclick="registrarOperador()">Registrarse y Compartir Ubicación</button>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script  type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+  const firebaseConfig = {
+  apiKey: "AIzaSyBgVMJ4tZQ_0vnzobHCniKsM6dgjCyoauc",
+  authDomain: "opl-demo-20e5d.firebaseapp.com",
+  projectId: "opl-demo-20e5d",
+  storageBucket: "opl-demo-20e5d.appspot.com",
+  messagingSenderId: "1015591087700",
+  appId: "1:1015591087700:web:55e01976e950b8251707c1",
+  measurementId: "G-6ML34RJ5KZ",
+  databaseURL: "https://opl-demo-20e5d-default-rtdb.firebaseio.com/"
+};
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  // ✅ Hacemos la función global usando window
+  window.registrarOperador = function () {
+    const numero = document.getElementById("numeroEmpleado").value.trim();
+    const nombre = document.getElementById("nombre").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const puesto = document.getElementById("puesto").value;
+
+    if (!numero || !nombre || !password || !puesto) {
+      alert("Por favor, completa todos los campos.");
+      return;
+    }
+
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const data = {
+          numeroEmpleado: numero,
+          nombre: nombre,
+          puesto: puesto,
+          contraseña: password,
+          ubicacion: {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            timestamp: Date.now()
+          }
+        };
+
+        set(ref(db, "ubicaciones/" + numero), data)
+          .then(() => {
+            alert("¡Registro y ubicación guardados correctamente!");
+          })
+          .catch((error) => {
+            alert("Error al guardar en Firebase: " + error.message);
+          });
+
+      }, (error) => {
+        alert("Error al obtener ubicación: " + error.message);
+      });
+    } else {
+      alert("Tu navegador no soporta geolocalización.");
+    }
+  }
+  </script>
 </body>
 </html>
