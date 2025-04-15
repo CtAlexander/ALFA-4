@@ -57,69 +57,105 @@
       <option value="Supervisor">Supervisor</option>
       <option value="Gerente">Gerente</option>
     </select>
-    <button onclick="registrarOperador()">Registrarse y Compartir Ubicación</button>
+    <button onclick="registrarOperador()">Compartir Ubicación</button>
   </div>
 
   <!-- Firebase SDK -->
-  <script  type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, set, update, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-  const firebaseConfig = {
-  apiKey: "AIzaSyBgVMJ4tZQ_0vnzobHCniKsM6dgjCyoauc",
-  authDomain: "opl-demo-20e5d.firebaseapp.com",
-  projectId: "opl-demo-20e5d",
-  storageBucket: "opl-demo-20e5d.appspot.com",
-  messagingSenderId: "1015591087700",
-  appId: "1:1015591087700:web:55e01976e950b8251707c1",
-  measurementId: "G-6ML34RJ5KZ",
-  databaseURL: "https://opl-demo-20e5d-default-rtdb.firebaseio.com/"
-};
+    const firebaseConfig = {
+      apiKey: "AIzaSyBgVMJ4tZQ_0vnzobHCniKsM6dgjCyoauc",
+      authDomain: "opl-demo-20e5d.firebaseapp.com",
+      projectId: "opl-demo-20e5d",
+      storageBucket: "opl-demo-20e5d.appspot.com",
+      messagingSenderId: "1015591087700",
+      appId: "1:1015591087700:web:55e01976e950b8251707c1",
+      measurementId: "G-6ML34RJ5KZ",
+      databaseURL: "https://opl-demo-20e5d-default-rtdb.firebaseio.com/"
+    };
 
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    let intervaloID = null;
 
-  // ✅ Hacemos la función global usando window
-  window.registrarOperador = function () {
-    const numero = document.getElementById("numeroEmpleado").value.trim();
-    const nombre = document.getElementById("nombre").value.trim();
-    const password = document.getElementById("password").value.trim();
-    const puesto = document.getElementById("puesto").value;
-
-    if (!numero || !nombre || !password || !puesto) {
-      alert("Por favor, completa todos los campos.");
-      return;
+    // ✅ Si ya se registró antes, reanudar envío automático
+    const datosGuardados = JSON.parse(localStorage.getItem("datosOperador"));
+    if (datosGuardados) {
+      iniciarEnvioContinuo(datosGuardados.numeroEmpleado);
     }
 
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        const data = {
-          numeroEmpleado: numero,
-          nombre: nombre,
-          puesto: puesto,
-          contraseña: password,
-          ubicacion: {
+    // ✅ Registrar operador
+    window.registrarOperador = function () {
+      const numero = document.getElementById("numeroEmpleado").value.trim();
+      const nombre = document.getElementById("nombre").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const puesto = document.getElementById("puesto").value;
+
+      if (!numero || !nombre || !password || !puesto) {
+        alert("Por favor, completa todos los campos.");
+        return;
+      }
+
+      if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition((position) => {
+          const ubicacion = {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
             timestamp: Date.now()
-          }
-        };
+          };
 
-        set(ref(db, "ubicaciones/" + numero), data)
-          .then(() => {
-            alert("¡Registro y ubicación guardados correctamente!");
-          })
-          .catch((error) => {
-            alert("Error al guardar en Firebase: " + error.message);
-          });
+          const data = {
+            numeroEmpleado: numero,
+            nombre: nombre,
+            puesto: puesto,
+            contraseña: password,
+            ubicacion: ubicacion
+          };
 
-      }, (error) => {
-        alert("Error al obtener ubicación: " + error.message);
-      });
-    } else {
-      alert("Tu navegador no soporta geolocalización.");
+          set(ref(db, "ubicaciones/" + numero), data)
+            .then(() => {
+              alert("¡Registro y ubicación guardados correctamente!");
+              localStorage.setItem("datosOperador", JSON.stringify({ numeroEmpleado: numero }));
+              iniciarEnvioContinuo(numero);
+            })
+            .catch((error) => {
+              alert("Error al guardar en Firebase: " + error.message);
+            });
+
+        }, (error) => {
+          alert("Error al obtener ubicación: " + error.message);
+        });
+      } else {
+        alert("Tu navegador no soporta geolocalización.");
+      }
+    };
+
+    // ✅ Envío continuo de ubicación + historial
+    function iniciarEnvioContinuo(numero) {
+      if (intervaloID) clearInterval(intervaloID);
+
+      function enviarUbicacion() {
+        navigator.geolocation.getCurrentPosition((position) => {
+          const ubicacion = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            timestamp: Date.now()
+          };
+
+          update(ref(db, "ubicaciones/" + numero + "/ubicacion"), ubicacion);
+
+          const historialRef = ref(db, "ubicaciones/" + numero + "/historial");
+          const nuevoPunto = push(historialRef);
+          set(nuevoPunto, ubicacion);
+        });
+      }
+
+      // ✅ Enviar ahora y luego cada 5 minutos
+      enviarUbicacion();
+      intervaloID = setInterval(enviarUbicacion, 5 * 60 * 1000);
     }
-  }
   </script>
 </body>
 </html>
