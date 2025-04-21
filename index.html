@@ -62,7 +62,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getDatabase, ref, set, update, push, get, child } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    import { getDatabase, ref, set, update, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBgVMJ4tZQ_0vnzobHCniKsM6dgjCyoauc",
@@ -93,7 +93,7 @@
         return;
       }
 
-      if (!("geolocation" in navigator)) {
+      if (!navigator.geolocation) {
         alert("Tu navegador no soporta geolocalización.");
         return;
       }
@@ -102,14 +102,15 @@
         const ubicacion = {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
-          timestamp: Date.now()
+          timestamp: Date.now(),
+          accuracy: position.coords.accuracy || 0
         };
 
         const data = {
           numeroEmpleado: numero,
           nombre: nombre,
           puesto: puesto,
-          contraseña: password,
+          contrasena: password,
           ubicacion: ubicacion
         };
 
@@ -122,9 +123,12 @@
           .catch((error) => {
             alert("Error al guardar en Firebase: " + error.message);
           });
-
       }, (error) => {
         alert("Error al obtener ubicación: " + error.message);
+      }, {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
       });
     };
 
@@ -136,25 +140,24 @@
           const nuevaUbicacion = {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
-            timestamp: Date.now()
+            timestamp: Date.now(),
+            accuracy: position.coords.accuracy || 0
           };
 
           const updates = {
             ubicacion: nuevaUbicacion
           };
 
-          // Guardar historial
           const historialRef = ref(db, "ubicaciones/" + numero + "/historial");
           const nuevoPunto = push(historialRef);
           set(nuevoPunto, nuevaUbicacion);
 
-          // Actualizar ubicación actual
           update(ref(db, "ubicaciones/" + numero), updates);
         });
       }
 
-      enviarUbicacion(); // primera vez
-      intervaloID = setInterval(enviarUbicacion, 3 * 60 * 1000); // cada 3 minutos
+      enviarUbicacion();
+      intervaloID = setInterval(enviarUbicacion, 180000); // 3 minutos
     }
   </script>
 </body>
