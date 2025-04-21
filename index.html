@@ -60,10 +60,9 @@
     <button onclick="registrarOperador()">Compartir Ubicación</button>
   </div>
 
-  <!-- Firebase SDK -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getDatabase, ref, set, update, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    import { getDatabase, ref, set, update, push, get, child } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBgVMJ4tZQ_0vnzobHCniKsM6dgjCyoauc",
@@ -80,13 +79,9 @@
     const db = getDatabase(app);
     let intervaloID = null;
 
-    // ✅ Si ya se registró antes, reanudar envío automático
     const datosGuardados = JSON.parse(localStorage.getItem("datosOperador"));
-    if (datosGuardados) {
-      iniciarEnvioContinuo(datosGuardados.numeroEmpleado);
-    }
+    if (datosGuardados) iniciarEnvioContinuo(datosGuardados.numeroEmpleado);
 
-    // ✅ Registrar operador
     window.registrarOperador = function () {
       const numero = document.getElementById("numeroEmpleado").value.trim();
       const nombre = document.getElementById("nombre").value.trim();
@@ -98,63 +93,68 @@
         return;
       }
 
-      if ("geolocation" in navigator) {
-        navigator.geolocation.getCurrentPosition((position) => {
-          const ubicacion = {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-            timestamp: Date.now()
-          };
-
-          const data = {
-            numeroEmpleado: numero,
-            nombre: nombre,
-            puesto: puesto,
-            contraseña: password,
-            ubicacion: ubicacion
-          };
-
-          set(ref(db, "ubicaciones/" + numero), data)
-            .then(() => {
-              alert("¡Registro y ubicación guardados correctamente!");
-              localStorage.setItem("datosOperador", JSON.stringify({ numeroEmpleado: numero }));
-              iniciarEnvioContinuo(numero);
-            })
-            .catch((error) => {
-              alert("Error al guardar en Firebase: " + error.message);
-            });
-
-        }, (error) => {
-          alert("Error al obtener ubicación: " + error.message);
-        });
-      } else {
+      if (!("geolocation" in navigator)) {
         alert("Tu navegador no soporta geolocalización.");
+        return;
       }
+
+      navigator.geolocation.getCurrentPosition((position) => {
+        const ubicacion = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          timestamp: Date.now()
+        };
+
+        const data = {
+          numeroEmpleado: numero,
+          nombre: nombre,
+          puesto: puesto,
+          contraseña: password,
+          ubicacion: ubicacion
+        };
+
+        set(ref(db, "ubicaciones/" + numero), data)
+          .then(() => {
+            alert("¡Registro exitoso! Ahora se compartirá tu ubicación.");
+            localStorage.setItem("datosOperador", JSON.stringify({ numeroEmpleado: numero }));
+            iniciarEnvioContinuo(numero);
+          })
+          .catch((error) => {
+            alert("Error al guardar en Firebase: " + error.message);
+          });
+
+      }, (error) => {
+        alert("Error al obtener ubicación: " + error.message);
+      });
     };
 
-    // ✅ Envío continuo de ubicación + historial
     function iniciarEnvioContinuo(numero) {
       if (intervaloID) clearInterval(intervaloID);
 
       function enviarUbicacion() {
         navigator.geolocation.getCurrentPosition((position) => {
-          const ubicacion = {
+          const nuevaUbicacion = {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
             timestamp: Date.now()
           };
 
-          update(ref(db, "ubicaciones/" + numero + "/ubicacion"), ubicacion);
+          const updates = {
+            ubicacion: nuevaUbicacion
+          };
 
+          // Guardar historial
           const historialRef = ref(db, "ubicaciones/" + numero + "/historial");
           const nuevoPunto = push(historialRef);
-          set(nuevoPunto, ubicacion);
+          set(nuevoPunto, nuevaUbicacion);
+
+          // Actualizar ubicación actual
+          update(ref(db, "ubicaciones/" + numero), updates);
         });
       }
 
-      // ✅ Enviar ahora y luego cada 5 minutos
-      enviarUbicacion();
-      intervaloID = setInterval(enviarUbicacion, 5 * 60 * 1000);
+      enviarUbicacion(); // primera vez
+      intervaloID = setInterval(enviarUbicacion, 3 * 60 * 1000); // cada 3 minutos
     }
   </script>
 </body>
