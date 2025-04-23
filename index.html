@@ -5,8 +5,38 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#2C82C9" />
   <title>Registro Operador - OPL</title>
+  <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/684/684908.png" />
 
-  <link rel="icon" href="data:,"> <!-- evita errores de ícono si no tienes uno -->
+  <!-- manifest incrustado como objeto JS para inyectarlo dinámicamente -->
+  <script>
+    const manifest = {
+      name: "OPL - Rastreo Operador",
+      short_name: "OPL",
+      start_url: "./",
+      display: "standalone",
+      background_color: "#1F3B73",
+      theme_color: "#2C82C9",
+      icons: [
+        {
+          src: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
+          sizes: "192x192",
+          type: "image/png"
+        },
+        {
+          src: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
+          sizes: "512x512",
+          type: "image/png"
+        }
+      ]
+    };
+    const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+    const manifestURL = URL.createObjectURL(manifestBlob);
+    const link = document.createElement('link');
+    link.rel = 'manifest';
+    link.href = manifestURL;
+    document.head.appendChild(link);
+  </script>
+
   <style>
     body {
       margin: 0;
@@ -48,30 +78,6 @@
       cursor: pointer;
     }
   </style>
-
-  <!-- Manifest incrustado -->
-  <script type="application/manifest+json">
-    {
-      "name": "OPL - Rastreo Operador",
-      "short_name": "OPL",
-      "start_url": "./",
-      "display": "standalone",
-      "background_color": "#1F3B73",
-      "theme_color": "#2C82C9",
-      "icons": [
-        {
-          "src": "https://cdn-icons-png.flaticon.com/512/684/684908.png",
-          "sizes": "192x192",
-          "type": "image/png"
-        },
-        {
-          "src": "https://cdn-icons-png.flaticon.com/512/684/684908.png",
-          "sizes": "512x512",
-          "type": "image/png"
-        }
-      ]
-    }
-  </script>
 </head>
 <body>
   <div class="form-container">
@@ -87,7 +93,6 @@
     <button onclick="registrarOperador()">Compartir Ubicación</button>
   </div>
 
-  <!-- Firebase + lógica GPS -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getDatabase, ref, set, update, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
@@ -185,7 +190,7 @@
     }
   </script>
 
-  <!-- Service Worker embebido -->
+  <!-- Service Worker embebido desde string -->
   <script>
     if ('serviceWorker' in navigator) {
       const swCode = `
@@ -197,13 +202,13 @@
           console.log('[SW] Activado');
         });
         self.addEventListener('fetch', (e) => {
-          // modo offline opcional
+          // Puedes poner lógica para offline aquí
         });
       `;
       const blob = new Blob([swCode], { type: 'application/javascript' });
       const swUrl = URL.createObjectURL(blob);
       navigator.serviceWorker.register(swUrl).then(() => {
-        console.log('✅ Service Worker embebido registrado');
+        console.log('✅ Service Worker registrado desde string');
       });
     }
   </script>
