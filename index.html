@@ -3,40 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#2C82C9" />
   <title>Registro Operador - OPL</title>
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#2C82C9" />
   <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/684/684908.png" />
-
-  <!-- manifest incrustado como objeto JS para inyectarlo dinámicamente -->
-  <script>
-    const manifest = {
-      name: "OPL - Rastreo Operador",
-      short_name: "OPL",
-      start_url: "./",
-      display: "standalone",
-      background_color: "#1F3B73",
-      theme_color: "#2C82C9",
-      icons: [
-        {
-          src: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
-          sizes: "192x192",
-          type: "image/png"
-        },
-        {
-          src: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
-          sizes: "512x512",
-          type: "image/png"
-        }
-      ]
-    };
-    const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
-    const manifestURL = URL.createObjectURL(manifestBlob);
-    const link = document.createElement('link');
-    link.rel = 'manifest';
-    link.href = manifestURL;
-    document.head.appendChild(link);
-  </script>
-
   <style>
     body {
       margin: 0;
@@ -186,29 +156,14 @@
       }
 
       enviarUbicacion();
-      intervaloID = setInterval(enviarUbicacion, 180000); // cada 3 minutos
+      intervaloID = setInterval(enviarUbicacion, 180000); // 3 minutos
     }
   </script>
 
-  <!-- Service Worker embebido desde string -->
   <script>
     if ('serviceWorker' in navigator) {
-      const swCode = `
-        self.addEventListener('install', (e) => {
-          console.log('[SW] Instalado');
-          self.skipWaiting();
-        });
-        self.addEventListener('activate', (e) => {
-          console.log('[SW] Activado');
-        });
-        self.addEventListener('fetch', (e) => {
-          // Puedes poner lógica para offline aquí
-        });
-      `;
-      const blob = new Blob([swCode], { type: 'application/javascript' });
-      const swUrl = URL.createObjectURL(blob);
-      navigator.serviceWorker.register(swUrl).then(() => {
-        console.log('✅ Service Worker registrado desde string');
+      navigator.serviceWorker.register('sw.js').then(() => {
+        console.log('✅ Service Worker registrado');
       });
     }
   </script>
