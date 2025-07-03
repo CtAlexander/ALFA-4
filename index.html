@@ -1,170 +1,158 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Registro Operador - OPL</title>
-  <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#2C82C9" />
-  <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/684/684908.png" />
+  <meta charset="UTF-8">
+  <title>Vincular dispositivo Alfa</title>
   <style>
     body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #1F3B73 0%, #2C82C9 100%);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+      font-family: sans-serif;
+      background: linear-gradient(to right, #1f3b73, #2c82c9);
       color: white;
-    }
-    .form-container {
-      background: rgba(255, 255, 255, 0.1);
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.3);
       text-align: center;
-      width: 300px;
+      padding: 2rem;
     }
-    h2 {
-      margin-bottom: 20px;
-    }
-    input, select {
-      width: 100%;
+    input, select, button {
+      margin: 10px;
       padding: 10px;
-      margin: 8px 0;
-      border: none;
-      border-radius: 6px;
-    }
-    button {
-      width: 100%;
-      padding: 12px;
-      margin-top: 15px;
-      background-color: #FFC107;
-      color: black;
-      font-weight: bold;
-      border: none;
+      font-size: 1rem;
       border-radius: 8px;
-      cursor: pointer;
+      border: none;
+    }
+    #estado {
+      margin-top: 1rem;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
-  <div class="form-container">
-    <h2>Registro Operador</h2>
-    <input type="text" id="numeroEmpleado" placeholder="Número de empleado" />
-    <input type="text" id="nombre" placeholder="Nombre completo" />
-    <input type="password" id="password" placeholder="Contraseña" />
-    <select id="puesto">
-      <option value="Operador">Operador</option>
-      <option value="Supervisor">Supervisor</option>
-      <option value="Gerente">Gerente</option>
-    </select>
-    <button onclick="registrarOperador()">Compartir Ubicación</button>
-  </div>
+  <h1>🔗 Vincular con Alfa</h1>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getDatabase, ref, set, update, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+  <input id="codigo" placeholder="Código de vinculación"><br>
+  <input id="nombre" placeholder="Nombre del dispositivo"><br>
+  <select id="tipo">
+    <option value="teléfono">📱 Teléfono</option>
+    <option value="pantalla">🖥 Pantalla</option>
+    <option value="tv">📺 TV</option>
+    <option value="otro">🧩 Otro</option>
+  </select><br>
+  <button onclick="vincular()">Vincular</button>
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyBgVMJ4tZQ_0vnzobHCniKsM6dgjCyoauc",
-      authDomain: "opl-demo-20e5d.firebaseapp.com",
-      projectId: "opl-demo-20e5d",
-      storageBucket: "opl-demo-20e5d.appspot.com",
-      messagingSenderId: "1015591087700",
-      appId: "1:1015591087700:web:55e01976e950b8251707c1",
-      measurementId: "G-6ML34RJ5KZ",
-      databaseURL: "https://opl-demo-20e5d-default-rtdb.firebaseio.com/"
-    };
+  <div id="estado"></div>
 
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-    let intervaloID = null;
-
-    const datosGuardados = JSON.parse(localStorage.getItem("datosOperador"));
-    if (datosGuardados) iniciarEnvioContinuo(datosGuardados.numeroEmpleado);
-
-    window.registrarOperador = function () {
-      const numero = document.getElementById("numeroEmpleado").value.trim();
-      const nombre = document.getElementById("nombre").value.trim();
-      const password = document.getElementById("password").value.trim();
-      const puesto = document.getElementById("puesto").value;
-
-      if (!numero || !nombre || !password || !puesto) {
-        alert("Por favor, completa todos los campos.");
-        return;
-      }
-
-      if (!navigator.geolocation) {
-        alert("Tu navegador no soporta geolocalización.");
-        return;
-      }
-
-      navigator.geolocation.getCurrentPosition((position) => {
-        const ubicacion = {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          timestamp: Date.now(),
-          accuracy: position.coords.accuracy || 0
-        };
-
-        const data = {
-          numeroEmpleado: numero,
-          nombre: nombre,
-          puesto: puesto,
-          contrasena: password,
-          ubicacion: ubicacion
-        };
-
-        set(ref(db, "ubicaciones/" + numero), data)
-          .then(() => {
-            alert("¡Registro exitoso! Ahora se compartirá tu ubicación.");
-            localStorage.setItem("datosOperador", JSON.stringify({ numeroEmpleado: numero }));
-            iniciarEnvioContinuo(numero);
-          })
-          .catch((error) => {
-            alert("Error al guardar en Firebase: " + error.message);
-          });
-      }, (error) => {
-        alert("Error al obtener ubicación: " + error.message);
-      }, {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 0
-      });
-    };
-
-    function iniciarEnvioContinuo(numero) {
-      if (intervaloID) clearInterval(intervaloID);
-
-      function enviarUbicacion() {
-        navigator.geolocation.getCurrentPosition((position) => {
-          const nuevaUbicacion = {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-            timestamp: Date.now(),
-            accuracy: position.coords.accuracy || 0
-          };
-
-          const updates = { ubicacion: nuevaUbicacion };
-          const historialRef = ref(db, "ubicaciones/" + numero + "/historial");
-          const nuevoPunto = push(historialRef);
-          set(nuevoPunto, nuevaUbicacion);
-          update(ref(db, "ubicaciones/" + numero), updates);
-        });
-      }
-
-      enviarUbicacion();
-      intervaloID = setInterval(enviarUbicacion, 180000); // 3 minutos
-    }
-  </script>
+  <hr>
+  <h2>🎤 Activar micrófono</h2>
+  <button onclick="activarMicrofono()">🎙️ Escuchar</button>
+  <p id="resultado">Comando escuchado: </p>
 
   <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js').then(() => {
-        console.log('✅ Service Worker registrado');
+    const FIREBASE_URL = "https://ia-alfa-default-rtdb.firebaseio.com/";
+    let nombreDispositivo = "";
+
+    async function vincular() {
+      const codigo = document.getElementById("codigo").value.trim();
+      nombreDispositivo = document.getElementById("nombre").value.trim();
+      const tipo = document.getElementById("tipo").value;
+
+      if (!codigo || !nombreDispositivo) {
+        alert("Rellena todos los campos");
+        return;
+      }
+
+      const res = await fetch(`${FIREBASE_URL}/vinculaciones_pendientes/${codigo}.json`);
+      const data = await res.json();
+
+      if (!data) {
+        document.getElementById("estado").innerText = "❌ Código inválido.";
+        return;
+      }
+
+      const ip = await obtenerIP();
+
+      const dispositivo = {
+        usuario: data.usuario,
+        tipo: tipo,
+        ip: ip,
+        activo: true,
+        nombre_amigable: nombreDispositivo
+      };
+
+      await fetch(`${FIREBASE_URL}/dispositivos_vinculados/${nombreDispositivo}.json`, {
+        method: "PUT",
+        body: JSON.stringify(dispositivo)
       });
+
+      await fetch(`${FIREBASE_URL}/vinculaciones_pendientes/${codigo}.json`, { method: "DELETE" });
+
+      document.getElementById("estado").innerText = `✅ Dispositivo '${nombreDispositivo}' vinculado.`;
+      escucharComandosDesdeFirebase();
+    }
+
+    async function obtenerIP() {
+      try {
+        const res = await fetch("https://api.ipify.org?format=json");
+        const data = await res.json();
+        return data.ip;
+      } catch {
+        return "0.0.0.0";
+      }
+    }
+
+    function activarMicrofono() {
+      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.lang = "es-MX";
+
+      recognition.start();
+
+      recognition.onresult = function(event) {
+        const texto = event.results[0][0].transcript.toLowerCase();
+        document.getElementById("resultado").innerText = "Comando escuchado: " + texto;
+
+        if (texto.includes("hola alfa")) {
+          hablar("Hola, soy Alfa. Estoy conectada y lista.");
+        }
+
+        if (texto.includes("muestra mi nombre")) {
+          hablar("Tu nombre es " + nombreDispositivo);
+        }
+
+        if (texto.includes("apaga la pantalla")) {
+          document.body.style.background = "black";
+        }
+
+        // Puedes agregar más comandos aquí
+      };
+    }
+
+    function hablar(texto) {
+      const msg = new SpeechSynthesisUtterance(texto);
+      msg.lang = "es-MX";
+      window.speechSynthesis.speak(msg);
+    }
+
+    function escucharComandosDesdeFirebase() {
+      const refURL = `${FIREBASE_URL}/comandos/${nombreDispositivo}.json`;
+      setInterval(async () => {
+        const res = await fetch(refURL);
+        const data = await res.json();
+
+        if (data && data.accion) {
+          ejecutarComando(data.accion);
+          await fetch(refURL, { method: "DELETE" }); // borra comando después de usar
+        }
+      }, 3000); // cada 3 segundos
+    }
+
+    function ejecutarComando(comando) {
+      if (comando === "saludar") {
+        hablar("Hola, soy tu dispositivo vinculado.");
+      }
+      if (comando === "cambiar color") {
+        document.body.style.background = "#FFC107";
+      }
+      if (comando === "modo oscuro") {
+        document.body.style.background = "#000";
+      }
+      // Agrega más comandos personalizados si deseas
     }
   </script>
 </body>
