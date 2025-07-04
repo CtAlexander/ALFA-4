@@ -142,18 +142,26 @@
       }, 3000); // cada 3 segundos
     }
 
-    function ejecutarComando(comando) {
-      if (comando === "saludar") {
-        hablar("Hola, soy tu dispositivo vinculado.");
-      }
-      if (comando === "cambiar color") {
-        document.body.style.background = "#FFC107";
-      }
-      if (comando === "modo oscuro") {
-        document.body.style.background = "#000";
-      }
-      // Agrega más comandos personalizados si deseas
-    }
+   function enviarComandoAlCerebro(comando) {
+  if (!nombreDispositivo) {
+    console.warn("⚠️ No hay nombre de dispositivo definido.");
+    return;
+  }
+
+  const url = `${FIREBASE_URL}/colmena/${nombreDispositivo}/comando.json`;
+
+  fetch(url, {
+    method: "PUT",
+    body: JSON.stringify(comando)
+  })
+  .then(() => {
+    console.log("✅ Comando enviado al núcleo de Alfa:", comando);
+  })
+  .catch(err => {
+    console.error("❌ Error al enviar comando a Alfa:", err);
+  });
+}
+
   </script>
 </body>
 </html>
