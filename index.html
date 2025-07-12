@@ -22,6 +22,7 @@
     const db = getDatabase(app);
     let nombreDispositivo = "";
     let reconocimiento;
+    let escuchandoActivador = false;
     let sintetizador = window.speechSynthesis;
 
     window.vincular = async function () {
@@ -69,12 +70,16 @@
     }
 
     function hablar(texto) {
+      if (reconocimiento) reconocimiento.stop(); // Apaga el micro al hablar
       const msg = new SpeechSynthesisUtterance(texto);
       msg.lang = "es-MX";
       sintetizador.speak(msg);
+      msg.onend = () => {
+        escucharPalabraClave(); // Reinicia escucha después de hablar
+      };
     }
 
-    function escucharComandoVoz() {
+    function escucharPalabraClave() {
       if (!('webkitSpeechRecognition' in window)) {
         alert("Tu navegador no soporta reconocimiento de voz.");
         return;
@@ -86,27 +91,51 @@
       reconocimiento.interimResults = false;
 
       reconocimiento.onresult = (event) => {
+        const activador = event.results[0][0].transcript.toLowerCase();
+        console.log("🟡 Detectado:", activador);
+        if (activador.includes("alfa")) {
+          hablar("Hola, te escucho...");
+          escucharComandoVoz(); // Ahora escucha el comando real
+        } else {
+          console.log("🔇 No se dijo la palabra clave.");
+          setTimeout(() => escucharPalabraClave(), 1000);
+        }
+      };
+
+      reconocimiento.onerror = (event) => {
+        console.error("🎤 Error activador:", event.error);
+      };
+
+      reconocimiento.start();
+    }
+
+    function escucharComandoVoz() {
+      reconocimiento = new webkitSpeechRecognition();
+      reconocimiento.lang = "es-MX";
+      reconocimiento.continuous = false;
+      reconocimiento.interimResults = false;
+
+      reconocimiento.onresult = (event) => {
         const comando = event.results[0][0].transcript.toLowerCase();
         hablar("Comando recibido: " + comando);
         console.log("🎤 Comando detectado:", comando);
 
-        // Enviar a colmena
         set(ref(db, "colmena/alfa/" + nombreDispositivo + "/ultimo_comando"), {
           texto: comando,
           timestamp: new Date().toISOString()
         });
 
-        // También enviar a comandos_pendientes por compatibilidad
         const refComando = ref(db, "comandos_pendientes/" + nombreDispositivo);
         push(refComando, { comando: comando });
       };
 
       reconocimiento.onerror = (event) => {
-        console.error("🎤 Error:", event.error);
+        console.error("🎤 Error comando:", event.error);
       };
 
       reconocimiento.onend = () => {
-        setTimeout(() => reconocimiento.start(), 1000); // Reinicia automáticamente
+        console.log("🟢 Volviendo a escuchar palabra clave...");
+        setTimeout(() => escucharPalabraClave(), 1000); // Reinicia escucha de activador
       };
 
       reconocimiento.start();
@@ -118,20 +147,20 @@
         const datos = snapshot.val();
         if (datos && datos.comando === "activar") {
           hablar("Hola, Alfa está activa en este dispositivo.");
-          escucharComandoVoz();
+          escucharPalabraClave();
           remove(ref(db, "activaciones/" + nombreDispositivo + "/" + snapshot.key));
         }
       });
     }
 
-    // Escucha con ENTER manual
+    // ENTER para activar palabra clave manualmente
     document.addEventListener("keydown", (e) => {
       if (e.key === "Enter" && nombreDispositivo) {
-        escucharComandoVoz();
+        escucharPalabraClave();
       }
     });
 
-    // Autocarga si ya está vinculado previamente
+    // Auto-reconexión si ya estaba vinculado antes
     window.addEventListener("load", () => {
       const nombreGuardado = localStorage.getItem("nombre_dispositivo");
       if (nombreGuardado) {
