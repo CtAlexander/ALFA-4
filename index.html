@@ -25,13 +25,26 @@
     let sintetizador = window.speechSynthesis;
     let dispositivoActivo = false;
 
+    function hablarSiCorresponde(texto) {
+      get(ref(db, "colmena/alfa/configuracion_audio")).then((snapshot) => {
+        const config = snapshot.val();
+        if (!config) return;
+
+        const hablarEn = config.hablar_en;
+
+        if (hablarEn === "ambos" || hablarEn === nombreDispositivo) {
+          hablar(texto);
+        }
+      });
+    }
+
     window.vincular = async function () {
       const codigo = document.getElementById("codigo").value.trim();
       const nombre = document.getElementById("nombre").value.trim().toLowerCase().replace(/\s+/g, "_");
       const status = document.getElementById("status");
 
       if (!codigo || !nombre) {
-        status.innerText = "⚠️ Ingresa ambos campos.";
+        status.innerText = "\u26a0\ufe0f Ingresa ambos campos.";
         status.style.color = "red";
         return;
       }
@@ -39,7 +52,7 @@
       try {
         const snap = await get(ref(db, "vinculaciones_pendientes/" + codigo));
         if (!snap.exists()) {
-          status.innerText = "❌ Código no encontrado o expirado.";
+          status.innerText = "\u274c Código no encontrado o expirado.";
           status.style.color = "red";
           return;
         }
@@ -78,7 +91,7 @@
 
     window.escucharComandoManual = function () {
       if (!dispositivoActivo) {
-        alert("🔇 Este dispositivo no está activo.");
+        alert("\ud83d\udd07 Este dispositivo no está activo.");
         return;
       }
 
@@ -94,8 +107,8 @@
 
       reconocimiento.onresult = (event) => {
         const comando = event.results[0][0].transcript.toLowerCase();
-        console.log("🎤 Comando:", comando);
-        hablar("Comando recibido: " + comando);
+        console.log("\ud83c\udfa4 Comando:", comando);
+        hablarSiCorresponde("Comando recibido: " + comando);
 
         set(ref(db, "colmena/alfa/" + nombreDispositivo + "/ultimo_comando"), {
           texto: comando,
@@ -107,16 +120,16 @@
 
         if (comando.includes("regresa")) {
           dispositivoActivo = true;
-          hablar("Regresé a este dispositivo.");
+          hablarSiCorresponde("Regresé a este dispositivo.");
         }
       };
 
       reconocimiento.onerror = (event) => {
-        console.error("🎤 Error:", event.error);
+        console.error("\ud83c\udfa4 Error:", event.error);
       };
 
       reconocimiento.onend = () => {
-        console.log("🔁 Micrófono apagado.");
+        console.log("\ud83d\udd01 Micrófono apagado.");
       };
 
       reconocimiento.start();
@@ -128,13 +141,12 @@
         const datos = snapshot.val();
         if (datos && datos.comando === "activar") {
           dispositivoActivo = true;
-          hablar("Hola, Alfa está activa en este dispositivo.");
+          hablarSiCorresponde("Hola, Alfa está activa en este dispositivo.");
           remove(ref(db, "activaciones/" + nombreDispositivo + "/" + snapshot.key));
         }
       });
     }
 
-    // Auto reconexión
     window.addEventListener("load", () => {
       const nombreGuardado = localStorage.getItem("nombre_dispositivo");
       if (nombreGuardado) {
@@ -192,7 +204,7 @@
     <input type="text" id="codigo" placeholder="Código de 3 dígitos" maxlength="3" />
     <input type="text" id="nombre" placeholder="Nombre del dispositivo" />
     <button onclick="vincular()">Vincular ahora</button>
-    <button onclick="escucharComandoManual()">🎙️ Escuchar comando</button>
+    <button onclick="escucharComandoManual()">🎹 Escuchar comando</button>
     <div id="status"></div>
     <p style="font-size: 0.9em; margin-top: 1rem;">Presiona el botón para hablar con Alfa solo si este dispositivo está activo.</p>
   </div>
