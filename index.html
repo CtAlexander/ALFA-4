@@ -5,7 +5,7 @@
   <title>Alfa Vinculación y Control</title>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-    import { getDatabase, ref, get, set, remove, push, onChildAdded } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+    import { getDatabase, ref, get, set, remove, push, onChildAdded, onValue } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyA1qb1Aw2I4U-3nn3Iazrsw_RxoE2ZxvUE",
@@ -25,6 +25,13 @@
     let sintetizador = window.speechSynthesis;
     let dispositivoActivo = false;
 
+    function hablar(texto) {
+      if (reconocimiento) reconocimiento.abort();
+      const msg = new SpeechSynthesisUtterance(texto);
+      msg.lang = "es-MX";
+      sintetizador.speak(msg);
+    }
+
     function hablarSiCorresponde(texto) {
       get(ref(db, "colmena/alfa/configuracion_audio")).then((snapshot) => {
         const config = snapshot.val();
@@ -34,6 +41,16 @@
 
         if (hablarEn === "ambos" || hablarEn === nombreDispositivo) {
           hablar(texto);
+        }
+      });
+    }
+
+    function escucharRespuestasFirebase() {
+      const respuestaRef = ref(db, "colmena/alfa/respuestas_dispositivo/" + nombreDispositivo);
+      onValue(respuestaRef, (snapshot) => {
+        const data = snapshot.val();
+        if (data && data.texto) {
+          hablar(data.texto);
         }
       });
     }
@@ -75,19 +92,13 @@
         localStorage.setItem("nombre_dispositivo", nombre);
 
         iniciarEscuchaDeComandos();
+        escucharRespuestasFirebase(); // ⬅️ ACTIVAR ESCUCHA DE RESPUESTAS
       } catch (e) {
         console.error("Error al vincular:", e);
         status.innerText = "❌ Error al conectar con Firebase.";
         status.style.color = "red";
       }
     };
-
-    function hablar(texto) {
-      if (reconocimiento) reconocimiento.abort();
-      const msg = new SpeechSynthesisUtterance(texto);
-      msg.lang = "es-MX";
-      sintetizador.speak(msg);
-    }
 
     window.escucharComandoManual = function () {
       if (!dispositivoActivo) {
@@ -153,6 +164,7 @@
         nombreDispositivo = nombreGuardado;
         document.getElementById("nombre").value = nombreDispositivo;
         iniciarEscuchaDeComandos();
+        escucharRespuestasFirebase(); // ⬅️ ESCUCHAR RESPUESTAS SI YA ESTÁ VINCULADO
         document.getElementById("status").innerText = "✅ Dispositivo ya vinculado. Esperando activación...";
       }
     });
