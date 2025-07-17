@@ -45,15 +45,24 @@
       });
     }
 
-    function escucharRespuestasFirebase() {
-      const respuestaRef = ref(db, "colmena/alfa/respuestas_dispositivo/" + nombreDispositivo);
-      onValue(respuestaRef, (snapshot) => {
-        const data = snapshot.val();
-        if (data && data.texto) {
-          hablar(data.texto);
-        }
-      });
+   function escucharRespuestasFirebase() {
+  const respuestaRef = ref(db, "colmena/alfa/respuestas_dispositivo/" + nombreDispositivo);
+
+  onValue(respuestaRef, (snapshot) => {
+    const data = snapshot.val();
+
+    if (data && data.texto) {
+      console.log("🗣️ Texto recibido para decir:", data.texto);
+
+      // Decir por voz
+      hablar(data.texto);
+
+      // Limpiar la respuesta para que no se repita
+      set(respuestaRef, null);
     }
+  });
+}
+
 
     window.vincular = async function () {
       const codigo = document.getElementById("codigo").value.trim();
