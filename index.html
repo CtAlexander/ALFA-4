@@ -46,7 +46,7 @@
     }
 
    function escucharRespuestasFirebase() {
-  const respuestaRef = ref(db, "colmena/alfa/respuestas_dispositivo/" + nombreDispositivo);
+  const respuestaRef = ref(db, "colmena/alfa/respuestas_dispositivo/" + nombreDispositivo + "/ultimo");
 
   onValue(respuestaRef, (snapshot) => {
     const data = snapshot.val();
@@ -54,14 +54,12 @@
     if (data && data.texto) {
       console.log("🗣️ Texto recibido para decir:", data.texto);
 
-      // Decir por voz
+      // Decir por voz sin borrar nada
       hablar(data.texto);
-
-      // Limpiar la respuesta para que no se repita
-      set(respuestaRef, null);
     }
   });
 }
+
 
 
     window.vincular = async function () {
