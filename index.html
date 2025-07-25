@@ -177,44 +177,88 @@
     });
   </script>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #e6f2ff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-    .container {
-      background: white;
-      padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.1);
-      max-width: 400px;
-      width: 100%;
-      text-align: center;
-    }
-    input {
-      width: 90%;
-      padding: 0.7rem;
-      margin: 0.5rem 0;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-    }
-    button {
-      padding: 0.7rem 1.2rem;
-      border: none;
-      background: #1f3b73;
-      color: white;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-      margin-top: 0.5rem;
-    }
-    #status {
-      margin-top: 1rem;
-      font-weight: bold;
-    }
+     body {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(to right, #1f3b73, #2c82c9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    overflow: hidden;
+  }
+
+  .container {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+    padding: 3rem 2rem;
+    text-align: center;
+    max-width: 420px;
+    width: 100%;
+    color: #fff;
+    transition: all 0.3s ease-in-out;
+  }
+
+  h2 {
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+    color: #ffffff;
+  }
+
+  input {
+    width: 90%;
+    padding: 0.75rem;
+    margin: 0.6rem 0;
+    border: none;
+    border-radius: 10px;
+    outline: none;
+    font-size: 1rem;
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    transition: 0.3s ease;
+  }
+
+  input::placeholder {
+    color: #888;
+  }
+
+  input:focus {
+    box-shadow: 0 0 0 2px #ffc107;
+  }
+
+  button {
+    padding: 0.75rem 1.4rem;
+    margin: 0.4rem;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    background-color: #ffc107;
+    color: #1f3b73;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+
+  button:hover {
+    background-color: #ffb300;
+    transform: scale(1.03);
+  }
+
+  #status {
+    margin-top: 1rem;
+    font-weight: bold;
+    font-size: 0.95rem;
+    color: #fff;
+  }
+
+  p {
+    font-size: 0.85rem;
+    color: #eee;
+    margin-top: 1.5rem;
+  }
   </style>
 </head>
 <body>
