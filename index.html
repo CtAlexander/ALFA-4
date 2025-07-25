@@ -176,90 +176,127 @@
       }
     });
   </script>
-  <style>
-     body {
-    font-family: 'Segoe UI', sans-serif;
-    background: linear-gradient(to right, #1f3b73, #2c82c9);
+ <style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
+
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Orbitron', sans-serif;
+    background: radial-gradient(circle at top left, #0f2027, #203a43, #2c5364);
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    margin: 0;
     overflow: hidden;
+    color: #00ffe1;
   }
 
   .container {
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    border-radius: 20px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
-    padding: 3rem 2rem;
-    text-align: center;
-    max-width: 420px;
+    background: rgba(0, 0, 0, 0.65);
+    border: 2px solid rgba(0, 255, 255, 0.2);
+    border-radius: 18px;
+    box-shadow: 0 0 25px rgba(0, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    padding: 2rem;
+    max-width: 460px;
     width: 100%;
-    color: #fff;
-    transition: all 0.3s ease-in-out;
+    text-align: center;
+    position: relative;
+  }
+
+  .container::before {
+    content: '';
+    position: absolute;
+    top: -30%;
+    left: -30%;
+    width: 160%;
+    height: 160%;
+    background: radial-gradient(ellipse at center, rgba(0,255,255,0.08), transparent);
+    z-index: 0;
+    animation: rotateGlow 12s linear infinite;
+  }
+
+  @keyframes rotateGlow {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
   }
 
   h2 {
-    margin-bottom: 1.5rem;
-    font-size: 1.8rem;
-    color: #ffffff;
+    color: #00ffe1;
+    font-size: 1.6rem;
+    margin-bottom: 2rem;
+    position: relative;
+    z-index: 1;
   }
 
   input {
     width: 90%;
-    padding: 0.75rem;
+    padding: 0.8rem;
     margin: 0.6rem 0;
-    border: none;
+    background: rgba(0, 255, 255, 0.08);
+    border: 1px solid #00ffe1;
     border-radius: 10px;
-    outline: none;
     font-size: 1rem;
-    background: rgba(255, 255, 255, 0.9);
-    color: #333;
+    color: #00ffe1;
+    outline: none;
     transition: 0.3s ease;
+    position: relative;
+    z-index: 1;
   }
 
   input::placeholder {
-    color: #888;
+    color: #80ffff;
   }
 
   input:focus {
-    box-shadow: 0 0 0 2px #ffc107;
+    box-shadow: 0 0 10px #00ffe1;
+    background: rgba(0, 255, 255, 0.15);
   }
 
   button {
-    padding: 0.75rem 1.4rem;
-    margin: 0.4rem;
+    background: #00ffe1;
+    color: #000;
     border: none;
-    border-radius: 10px;
+    padding: 0.8rem 1.5rem;
     font-size: 1rem;
     font-weight: bold;
+    border-radius: 10px;
     cursor: pointer;
-    background-color: #ffc107;
-    color: #1f3b73;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-top: 1rem;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 1;
   }
 
   button:hover {
-    background-color: #ffb300;
-    transform: scale(1.03);
+    background: #00cccc;
+    transform: scale(1.05);
+    box-shadow: 0 0 12px #00ffff;
   }
 
   #status {
     margin-top: 1rem;
-    font-weight: bold;
     font-size: 0.95rem;
-    color: #fff;
+    font-weight: bold;
+    color: #00ffbf;
+    position: relative;
+    z-index: 1;
   }
 
   p {
     font-size: 0.85rem;
-    color: #eee;
+    color: #66ffff;
     margin-top: 1.5rem;
+    position: relative;
+    z-index: 1;
   }
-  </style>
+</style>
+
 </head>
 <body>
   <div class="container">
