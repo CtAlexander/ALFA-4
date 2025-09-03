@@ -45,22 +45,18 @@
       });
     }
 
-   function escucharRespuestasFirebase() {
-  const respuestaRef = ref(db, "colmena/alfa/respuestas_dispositivo/" + nombreDispositivo + "/ultimo");
+    function escucharRespuestasFirebase() {
+      const respuestaRef = ref(db, "colmena/alfa/respuestas_dispositivo/" + nombreDispositivo + "/ultimo");
 
-  onValue(respuestaRef, (snapshot) => {
-    const data = snapshot.val();
+      onValue(respuestaRef, (snapshot) => {
+        const data = snapshot.val();
 
-    if (data && data.texto) {
-      console.log("🗣️ Texto recibido para decir:", data.texto);
-
-      // Decir por voz sin borrar nada
-      hablar(data.texto);
+        if (data && data.texto) {
+          console.log("🗣️ Texto recibido para decir:", data.texto);
+          hablar(data.texto); // reproducir en voz alta
+        }
+      });
     }
-  });
-}
-
-
 
     window.vincular = async function () {
       const codigo = document.getElementById("codigo").value.trim();
@@ -99,7 +95,7 @@
         localStorage.setItem("nombre_dispositivo", nombre);
 
         iniciarEscuchaDeComandos();
-        escucharRespuestasFirebase(); // ⬅️ ACTIVAR ESCUCHA DE RESPUESTAS
+        escucharRespuestasFirebase(); // escuchar respuestas desde Firebase
       } catch (e) {
         console.error("Error al vincular:", e);
         status.innerText = "❌ Error al conectar con Firebase.";
@@ -171,132 +167,58 @@
         nombreDispositivo = nombreGuardado;
         document.getElementById("nombre").value = nombreDispositivo;
         iniciarEscuchaDeComandos();
-        escucharRespuestasFirebase(); // ⬅️ ESCUCHAR RESPUESTAS SI YA ESTÁ VINCULADO
+        escucharRespuestasFirebase(); // escuchar respuestas al cargar
         document.getElementById("status").innerText = "✅ Dispositivo ya vinculado. Esperando activación...";
       }
     });
   </script>
- <style>
-  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
 
-  body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Orbitron', sans-serif;
-    background: radial-gradient(circle at top left, #0f2027, #203a43, #2c5364);
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-    color: #00ffe1;
-  }
-
-  .container {
-    background: rgba(0, 0, 0, 0.65);
-    border: 2px solid rgba(0, 255, 255, 0.2);
-    border-radius: 18px;
-    box-shadow: 0 0 25px rgba(0, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    padding: 2rem;
-    max-width: 460px;
-    width: 100%;
-    text-align: center;
-    position: relative;
-  }
-
-  .container::before {
-    content: '';
-    position: absolute;
-    top: -30%;
-    left: -30%;
-    width: 160%;
-    height: 160%;
-    background: radial-gradient(ellipse at center, rgba(0,255,255,0.08), transparent);
-    z-index: 0;
-    animation: rotateGlow 12s linear infinite;
-  }
-
-  @keyframes rotateGlow {
-    0% {
-      transform: rotate(0deg);
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
+    body {
+      margin: 0; padding: 0;
+      font-family: 'Orbitron', sans-serif;
+      background: radial-gradient(circle at top left, #0f2027, #203a43, #2c5364);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      color: #00ffe1;
     }
-    100% {
-      transform: rotate(360deg);
+    .container {
+      background: rgba(0, 0, 0, 0.65);
+      border: 2px solid rgba(0, 255, 255, 0.2);
+      border-radius: 18px;
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      padding: 2rem;
+      max-width: 460px;
+      width: 100%;
+      text-align: center;
+      position: relative;
     }
-  }
-
-  h2 {
-    color: #00ffe1;
-    font-size: 1.6rem;
-    margin-bottom: 2rem;
-    position: relative;
-    z-index: 1;
-  }
-
-  input {
-    width: 90%;
-    padding: 0.8rem;
-    margin: 0.6rem 0;
-    background: rgba(0, 255, 255, 0.08);
-    border: 1px solid #00ffe1;
-    border-radius: 10px;
-    font-size: 1rem;
-    color: #00ffe1;
-    outline: none;
-    transition: 0.3s ease;
-    position: relative;
-    z-index: 1;
-  }
-
-  input::placeholder {
-    color: #80ffff;
-  }
-
-  input:focus {
-    box-shadow: 0 0 10px #00ffe1;
-    background: rgba(0, 255, 255, 0.15);
-  }
-
-  button {
-    background: #00ffe1;
-    color: #000;
-    border: none;
-    padding: 0.8rem 1.5rem;
-    font-size: 1rem;
-    font-weight: bold;
-    border-radius: 10px;
-    cursor: pointer;
-    margin-top: 1rem;
-    transition: all 0.3s ease;
-    position: relative;
-    z-index: 1;
-  }
-
-  button:hover {
-    background: #00cccc;
-    transform: scale(1.05);
-    box-shadow: 0 0 12px #00ffff;
-  }
-
-  #status {
-    margin-top: 1rem;
-    font-size: 0.95rem;
-    font-weight: bold;
-    color: #00ffbf;
-    position: relative;
-    z-index: 1;
-  }
-
-  p {
-    font-size: 0.85rem;
-    color: #66ffff;
-    margin-top: 1.5rem;
-    position: relative;
-    z-index: 1;
-  }
-</style>
-
+    .container::before {
+      content: '';
+      position: absolute;
+      top: -30%;
+      left: -30%;
+      width: 160%;
+      height: 160%;
+      background: radial-gradient(ellipse at center, rgba(0,255,255,0.08), transparent);
+      z-index: 0;
+      animation: rotateGlow 12s linear infinite;
+    }
+    @keyframes rotateGlow { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    h2 { color: #00ffe1; font-size: 1.6rem; margin-bottom: 2rem; position: relative; z-index: 1; }
+    input { width: 90%; padding: 0.8rem; margin: 0.6rem 0; background: rgba(0, 255, 255, 0.08); border: 1px solid #00ffe1; border-radius: 10px; font-size: 1rem; color: #00ffe1; outline: none; transition: 0.3s ease; position: relative; z-index: 1; }
+    input::placeholder { color: #80ffff; }
+    input:focus { box-shadow: 0 0 10px #00ffe1; background: rgba(0, 255, 255, 0.15); }
+    button { background: #00ffe1; color: #000; border: none; padding: 0.8rem 1.5rem; font-size: 1rem; font-weight: bold; border-radius: 10px; cursor: pointer; margin-top: 1rem; transition: all 0.3s ease; position: relative; z-index: 1; }
+    button:hover { background: #00cccc; transform: scale(1.05); box-shadow: 0 0 12px #00ffff; }
+    #status { margin-top: 1rem; font-size: 0.95rem; font-weight: bold; color: #00ffbf; position: relative; z-index: 1; }
+    p { font-size: 0.85rem; color: #66ffff; margin-top: 1.5rem; position: relative; z-index: 1; }
+  </style>
 </head>
 <body>
   <div class="container">
