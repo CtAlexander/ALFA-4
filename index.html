@@ -2,200 +2,234 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Para mi brujita 💛</title>
+  <title>Alfa Vinculación y Control</title>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getDatabase, ref, get, set, remove, push, onChildAdded, onValue } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA1qb1Aw2I4U-3nn3Iazrsw_RxoE2ZxvUE",
+      authDomain: "ia-alfa.firebaseapp.com",
+      databaseURL: "https://ia-alfa-default-rtdb.firebaseio.com/",
+      projectId: "ia-alfa",
+      storageBucket: "ia-alfa.appspot.com",
+      messagingSenderId: "30859561655",
+      appId: "1:30859561655:web:714ab0eb70fd22d9f85b32",
+      measurementId: "G-5TG3F54YD7"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    let nombreDispositivo = "";
+    let reconocimiento;
+    let sintetizador = window.speechSynthesis;
+    let dispositivoActivo = false;
+
+    function hablar(texto) {
+      if (reconocimiento) reconocimiento.abort();
+      const msg = new SpeechSynthesisUtterance(texto);
+      msg.lang = "es-MX";
+      sintetizador.speak(msg);
+    }
+
+    function hablarSiCorresponde(texto) {
+      get(ref(db, "colmena/alfa/configuracion_audio")).then((snapshot) => {
+        const config = snapshot.val();
+        if (!config) return;
+
+        const hablarEn = config.hablar_en;
+
+        if (hablarEn === "ambos" || hablarEn === nombreDispositivo) {
+          hablar(texto);
+        }
+      });
+    }
+
+    function escucharRespuestasFirebase() {
+      const respuestaRef = ref(db, "colmena/alfa/respuestas_dispositivo/" + nombreDispositivo + "/ultimo");
+
+      onValue(respuestaRef, (snapshot) => {
+        const data = snapshot.val();
+
+        if (data && data.texto) {
+          console.log("🗣️ Texto recibido para decir:", data.texto);
+          hablar(data.texto); // reproducir en voz alta
+        }
+      });
+    }
+
+    window.vincular = async function () {
+      const codigo = document.getElementById("codigo").value.trim();
+      const nombre = document.getElementById("nombre").value.trim().toLowerCase().replace(/\s+/g, "_");
+      const status = document.getElementById("status");
+
+      if (!codigo || !nombre) {
+        status.innerText = "\u26a0\ufe0f Ingresa ambos campos.";
+        status.style.color = "red";
+        return;
+      }
+
+      try {
+        const snap = await get(ref(db, "vinculaciones_pendientes/" + codigo));
+        if (!snap.exists()) {
+          status.innerText = "\u274c Código no encontrado o expirado.";
+          status.style.color = "red";
+          return;
+        }
+
+        const data = snap.val();
+        const nuevo = {
+          ...data,
+          nombre: nombre,
+          ip: "web",
+          tipo: "teléfono",
+          vinculado_en: new Date().toISOString()
+        };
+
+        await set(ref(db, "dispositivos_vinculados/" + nombre), nuevo);
+        await remove(ref(db, "vinculaciones_pendientes/" + codigo));
+
+        status.innerText = "✅ Vinculación exitosa. Esperando activación...";
+        status.style.color = "green";
+        nombreDispositivo = nombre;
+        localStorage.setItem("nombre_dispositivo", nombre);
+
+        iniciarEscuchaDeComandos();
+        escucharRespuestasFirebase(); // escuchar respuestas desde Firebase
+      } catch (e) {
+        console.error("Error al vincular:", e);
+        status.innerText = "❌ Error al conectar con Firebase.";
+        status.style.color = "red";
+      }
+    };
+
+    window.escucharComandoManual = function () {
+      if (!dispositivoActivo) {
+        alert("\ud83d\udd07 Este dispositivo no está activo.");
+        return;
+      }
+
+      if (!('webkitSpeechRecognition' in window)) {
+        alert("Tu navegador no soporta reconocimiento de voz.");
+        return;
+      }
+
+      reconocimiento = new webkitSpeechRecognition();
+      reconocimiento.lang = "es-MX";
+      reconocimiento.continuous = false;
+      reconocimiento.interimResults = false;
+
+      reconocimiento.onresult = (event) => {
+        const comando = event.results[0][0].transcript.toLowerCase();
+        console.log("\ud83c\udfa4 Comando:", comando);
+        hablarSiCorresponde("Comando recibido: " + comando);
+
+        set(ref(db, "colmena/alfa/" + nombreDispositivo + "/ultimo_comando"), {
+          texto: comando,
+          timestamp: new Date().toISOString()
+        });
+
+        const refComando = ref(db, "comandos_pendientes/" + nombreDispositivo);
+        push(refComando, { comando: comando });
+
+        if (comando.includes("regresa")) {
+          dispositivoActivo = true;
+          hablarSiCorresponde("Regresé a este dispositivo.");
+        }
+      };
+
+      reconocimiento.onerror = (event) => {
+        console.error("\ud83c\udfa4 Error:", event.error);
+      };
+
+      reconocimiento.onend = () => {
+        console.log("\ud83d\udd01 Micrófono apagado.");
+      };
+
+      reconocimiento.start();
+    };
+
+    function iniciarEscuchaDeComandos() {
+      const activacionesRef = ref(db, "activaciones/" + nombreDispositivo);
+      onChildAdded(activacionesRef, (snapshot) => {
+        const datos = snapshot.val();
+        if (datos && datos.comando === "activar") {
+          dispositivoActivo = true;
+          hablarSiCorresponde("Hola, Alfa está activa en este dispositivo.");
+          remove(ref(db, "activaciones/" + nombreDispositivo + "/" + snapshot.key));
+        }
+      });
+    }
+
+    window.addEventListener("load", () => {
+      const nombreGuardado = localStorage.getItem("nombre_dispositivo");
+      if (nombreGuardado) {
+        nombreDispositivo = nombreGuardado;
+        document.getElementById("nombre").value = nombreDispositivo;
+        iniciarEscuchaDeComandos();
+        escucharRespuestasFirebase(); // escuchar respuestas al cargar
+        document.getElementById("status").innerText = "✅ Dispositivo ya vinculado. Esperando activación...";
+      }
+    });
+  </script>
+
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
     body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #fffbe6, #ffe680);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      margin: 0; padding: 0;
+      font-family: 'Orbitron', sans-serif;
+      background: radial-gradient(circle at top left, #0f2027, #203a43, #2c5364);
       height: 100vh;
-      overflow: hidden;
-      text-align: center;
-    }
-
-    h1 {
-      color: #b8860b;
-      font-size: 2.2rem;
-      margin-bottom: 20px;
-      animation: fadeIn 2s ease-in-out;
-    }
-
-    .flowers {
-      font-size: 3rem;
-      line-height: 1.5;
-      animation: float 3s ease-in-out infinite;
-    }
-
-    .notes-container {
-      margin-top: 30px;
       display: flex;
-      gap: 15px;
-      flex-wrap: wrap;
       justify-content: center;
-    }
-
-    .note {
-      background: #fff8dc;
-      border: 2px solid #ffd700;
-      border-radius: 10px;
-      padding: 15px 20px;
-      width: 120px;
-      height: 80px;
-      display: flex;
       align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-weight: bold;
-      color: #8b7500;
-      transition: transform 0.3s, background 0.3s;
+      overflow: hidden;
+      color: #00ffe1;
     }
-
-    .note:hover {
-      transform: scale(1.1);
-      background: #fffacd;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
-    }
-
-    .popup {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) scale(0);
-      background: white;
-      border: 2px solid #ffd700;
-      border-radius: 15px;
-      padding: 25px;
-      max-width: 300px;
+    .container {
+      background: rgba(0, 0, 0, 0.65);
+      border: 2px solid rgba(0, 255, 255, 0.2);
+      border-radius: 18px;
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      padding: 2rem;
+      max-width: 460px;
+      width: 100%;
       text-align: center;
-      box-shadow: 0px 5px 20px rgba(0,0,0,0.3);
-      transition: transform 0.3s ease-in-out;
-      z-index: 1000;
+      position: relative;
     }
-
-    .popup.active {
-      transform: translate(-50%, -50%) scale(1);
+    .container::before {
+      content: '';
+      position: absolute;
+      top: -30%;
+      left: -30%;
+      width: 160%;
+      height: 160%;
+      background: radial-gradient(ellipse at center, rgba(0,255,255,0.08), transparent);
+      z-index: 0;
+      animation: rotateGlow 12s linear infinite;
     }
-
-    .popup p {
-      margin: 0;
-      color: #8b7500;
-      font-size: 1.2rem;
-    }
-
-    .close-btn {
-      margin-top: 15px;
-      padding: 5px 10px;
-      border: none;
-      border-radius: 5px;
-      background: #ffd700;
-      color: #333;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    .close-btn:hover {
-      background: #ffec8b;
-    }
-
-.bouquet {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 30px 0;
-  animation: float 3s ease-in-out infinite;
-}
-
-.flowers {
-  font-size: 2rem;
-  line-height: 2rem;
-  text-align: center;
-}
-
-.ribbon {
-  font-size: 2rem;
-  margin: 5px 0;
-  animation: shine 2s infinite alternate;
-}
-
-.stems {
-  font-size: 2rem;
-  color: green;
-  margin-top: 5px;
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-
-@keyframes shine {
-  from { opacity: 0.5; transform: scale(1); }
-  to { opacity: 1; transform: scale(1.2); }
-}
-
-
+    @keyframes rotateGlow { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    h2 { color: #00ffe1; font-size: 1.6rem; margin-bottom: 2rem; position: relative; z-index: 1; }
+    input { width: 90%; padding: 0.8rem; margin: 0.6rem 0; background: rgba(0, 255, 255, 0.08); border: 1px solid #00ffe1; border-radius: 10px; font-size: 1rem; color: #00ffe1; outline: none; transition: 0.3s ease; position: relative; z-index: 1; }
+    input::placeholder { color: #80ffff; }
+    input:focus { box-shadow: 0 0 10px #00ffe1; background: rgba(0, 255, 255, 0.15); }
+    button { background: #00ffe1; color: #000; border: none; padding: 0.8rem 1.5rem; font-size: 1rem; font-weight: bold; border-radius: 10px; cursor: pointer; margin-top: 1rem; transition: all 0.3s ease; position: relative; z-index: 1; }
+    button:hover { background: #00cccc; transform: scale(1.05); box-shadow: 0 0 12px #00ffff; }
+    #status { margin-top: 1rem; font-size: 0.95rem; font-weight: bold; color: #00ffbf; position: relative; z-index: 1; }
+    p { font-size: 0.85rem; color: #66ffff; margin-top: 1.5rem; position: relative; z-index: 1; }
   </style>
 </head>
 <body>
-
-  <h1>🌼 Eres la mejor novia, brujita 💛 Feliz 21 de septiembre 🌼</h1>
-
-  <div class="bouquet">
-  <div class="flowers">
-    💛🌼💛🌼💛🌼💛🌼💛🌼💛<br>
-    💛🌼💛🌼💛🌼💛🌼💛🌼<br>
-    💛🌼💛🌼💛🌼💛🌼💛<br>
-    💛🌼💛🌼💛🌼💛🌼<br>
-    💛🌼💛🌼💛🌼💛<br>
-    💛🌼💛🌼💛🌼<br>
-    💛🌼💛🌼💛<br>
-    💛🌼💛🌼<br>
-    💛🌼💛<br>
-    💛🌼<br>
-    💛
+  <div class="container">
+    <h2>🔗 Vincular con Alfa</h2>
+    <input type="text" id="codigo" placeholder="Código de 3 dígitos" maxlength="3" />
+    <input type="text" id="nombre" placeholder="Nombre del dispositivo" />
+    <button onclick="vincular()">Vincular ahora</button>
+    <button onclick="escucharComandoManual()">🎹 Escuchar comando</button>
+    <div id="status"></div>
+    <p style="font-size: 0.9em; margin-top: 1rem;">Presiona el botón para hablar con Alfa solo si este dispositivo está activo.</p>
   </div>
-  <div class="ribbon">🎀</div>
-  <div class="stems">💕💕💕💕💕💕💕💕💕</div>
-</div>
-
-
-  <div class="notes-container">
-    <div class="note" onclick="showMessage('Eres mi razón favorita para sonreír 💕')">🎁 Nota 1</div>
-    <div class="note" onclick="showMessage('No hay día que no piense en ti 🌙✨')">🎁 Nota 2</div>
-    <div class="note" onclick="showMessage('Eres lo mejor que me pasó en la vida 💛')">🎁 Nota 3</div>
-    <div class="note" onclick="showMessage('Me haces sentir el chico más feliz del mundo 💕')">🎁 Nota 4</div>
-    <div class="note" onclick="showMessage('Si pudiera elegir mil veces, siempre te elegiría a ti 💛')">🎁 Nota 5</div>
-  </div>
-
-  <div class="popup" id="popup">
-    <p id="popupMessage"></p>
-    <button class="close-btn" onclick="closePopup()">Cerrar</button>
-  </div>
-
-  <script>
-    function showMessage(message) {
-      document.getElementById("popupMessage").innerText = message;
-      document.getElementById("popup").classList.add("active");
-    }
-
-    function closePopup() {
-      document.getElementById("popup").classList.remove("active");
-    }
-  </script>
 </body>
 </html>
 
