@@ -234,29 +234,39 @@ function renderPartido() {
 }
 function llenarSelect() {
 
-  const select =
-    document.getElementById("ganador");
+    const select = document.getElementById("ganador");
 
-  if (!select || !partidoActual)
-    return;
+    if (!select || !partidoActual) return;
 
-  select.innerHTML = `
-    <option value="">
-      Seleccionar
-    </option>
+    select.innerHTML = "";
 
-    <option value="${partidoActual.local}">
-      ${partidoActual.local}
-    </option>
+    // Opción por defecto
+    const opcionDefault = document.createElement("option");
+    opcionDefault.value = "";
+    opcionDefault.textContent = "Seleccionar";
+    opcionDefault.disabled = true;
+    opcionDefault.selected = true;
+    select.appendChild(opcionDefault);
 
-    <option value="${partidoActual.visitante}">
-      ${partidoActual.visitante}
-    </option>
-  `;
+    // Equipo local
+    const opcionLocal = document.createElement("option");
+    opcionLocal.value = partidoActual.local;
+    opcionLocal.textContent = partidoActual.local;
+    select.appendChild(opcionLocal);
+
+    // EMPATE
+    const opcionEmpate = document.createElement("option");
+    opcionEmpate.value = "EMPATE";
+    opcionEmpate.textContent = "EMPATE";
+    select.appendChild(opcionEmpate);
+
+    // Equipo visitante
+    const opcionVisitante = document.createElement("option");
+    opcionVisitante.value = partidoActual.visitante;
+    opcionVisitante.textContent = partidoActual.visitante;
+    select.appendChild(opcionVisitante);
+
 }
-
-
-
 
 async function cargarSaldo() {
 
@@ -305,12 +315,16 @@ if (!ganador) return alert("Selecciona ganador");
 const modal = document.getElementById("modalConfirmacion");
 if (!modal) return;
 
-// 🔥 TEXTO DINÁMICO PRO
+let textoResultado =
+ganador === "EMPATE"
+? "EMPATE como resultado final"
+: `${ganador} como ganador`;
+
 modal.querySelector("p").innerHTML =
 `Vas a apostar <b>${creditos}</b> créditos en este partido`;
 
 modal.querySelector("ul").innerHTML = `
-<li><b>${ganador}</b> como ganador</li>
+<li><b>${textoResultado}</b></li>
 <li>Marcador: <b>${local} - ${visitante}</b></li>
 <li>Bolsa total se actualiza automáticamente</li>
 <li>No se puede cancelar después de confirmar</li>
@@ -319,7 +333,6 @@ modal.querySelector("ul").innerHTML = `
 
 modal.style.display = "flex";
 }
-
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -346,7 +359,6 @@ Number(document.getElementById("creditos").value || 0)
 });
 
 });
-
 async function registrarApuesta(ganador, local, visitante, creditos) {
 
     // 🔥 VALIDAR SI LAS APUESTAS YA CERRARON
@@ -386,7 +398,7 @@ async function registrarApuesta(ganador, local, visitante, creditos) {
     await set(apuestaRef, {
         uid,
         nombre: user.nombre,
-        ganador,
+        ganador, // Puede ser LOCAL, VISITANTE o EMPATE
         marcadorLocal: local,
         marcadorVisitante: visitante,
         creditos,
