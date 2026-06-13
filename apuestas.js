@@ -109,38 +109,66 @@ function renderPartido() {
     <div class="match-row">
 
         <div style="
-            display:flex;
-            justify-content:center;
-            align-items:center;
-            gap:15px;
-            margin-bottom:15px;
-        ">
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:20px;
+    margin-bottom:15px;
+">
 
-            <img
-                src="${partidoActual.logoLocal}"
-                width="60"
-                height="60"
-            >
+    <img
+        src="${partidoActual.logoLocal}"
+        width="60"
+        height="60"
+    >
 
-            <h2>
-                ${partidoActual.local}
-            </h2>
+    <h2 style="
+        margin:0;
+        min-width:120px;
+        text-align:right;
+    ">
+        ${partidoActual.local}
+    </h2>
 
-            <span>
-                VS
-            </span>
+    <span style="
+        font-size:40px;
+        font-weight:700;
+        color:#fff;
+    ">
+        ${partidoActual.golesLocal || 0}
+    </span>
 
-            <h2>
-                ${partidoActual.visitante}
-            </h2>
+    <span style="
+        font-size:26px;
+        font-weight:700;
+        color:#fff;
+    ">
+        VS
+    </span>
 
-            <img
-                src="${partidoActual.logoVisitante}"
-                width="60"
-                height="60"
-            >
+    <span style="
+        font-size:40px;
+        font-weight:700;
+        color:#fff;
+    ">
+        ${partidoActual.golesVisitante || 0}
+    </span>
 
-        </div>
+    <h2 style="
+        margin:0;
+        min-width:120px;
+        text-align:left;
+    ">
+        ${partidoActual.visitante}
+    </h2>
+
+    <img
+        src="${partidoActual.logoVisitante}"
+        width="60"
+        height="60"
+    >
+
+</div>
 
         <div>
             🏆 Grupo ${partidoActual.grupo}
