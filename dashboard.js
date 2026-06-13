@@ -368,9 +368,39 @@ function cargarPartidoDestacado(partidos) {
     obtenerEscudo(partido.visitante);
 
   document.getElementById("infoPartido").innerHTML = `
-    📅 ${new Date(partido.fecha).toLocaleString("es-MX")}<br>
-    🏟️ ${partido.estadio}<br>
-    🌎 ${partido.ciudad}
+
+    <div style="
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      gap:20px;
+      font-size:55px;
+      font-weight:700;
+      color:white;
+      margin-bottom:20px;
+    ">
+      <span>${partido.golesLocal || 0}</span>
+
+      <span style="
+        font-size:40px;
+        color:white;
+      ">
+        VS
+      </span>
+
+      <span>${partido.golesVisitante || 0}</span>
+    </div>
+
+    <div style="
+      text-align:center;
+      line-height:2;
+      font-size:20px;
+    ">
+      📅 ${new Date(partido.fecha).toLocaleString("es-MX")}<br>
+      🏟️ ${partido.estadio}<br>
+      🌎 ${partido.ciudad}
+    </div>
+
   `;
 
   document.getElementById("btnApostar").onclick = () => {
