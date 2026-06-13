@@ -215,7 +215,7 @@ ciudad:"Houston"
 {
 id:1010,
 grupo:"F",
-local:"paises bajos",
+local:"países bajos",
 visitante:"Japón",
 fecha:"2026-06-14T14:00:00",
 ciudad:"Dallas"
@@ -440,7 +440,7 @@ ciudad:"Kansas City"
 {
 id:1035,
 grupo:"F",
-local:"paises bajos",
+local:"países bajos",
 visitante:"Suecia",
 fecha:"2026-06-20T11:00:00",
 ciudad:"Houston"
@@ -648,7 +648,7 @@ ciudad:"Dallas"
 id:1058,
 grupo:"F",
 local:"Túnez",
-visitante:"paises bajos",
+visitante:"países bajos",
 fecha:"2026-06-25T17:00:00",
 ciudad:"Kansas City"
 },
