@@ -8,6 +8,7 @@ update,
 onValue
 }
 from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
+
 function obtenerEscudo(nombre) {
 
     if (!nombre)
@@ -47,7 +48,7 @@ function obtenerEscudo(nombre) {
         "alemania": "escudos/alemania.jpg",
         "curazao": "escudos/curazao.jpg",
 
-        "holanda": "escudos/holanda.jpg",
+        "paises bajos": "escudos/paises bajos.jpg",
         "japon": "escudos/japon.jpg",
 
         "costa de marfil": "escudos/costa-marfil.jpg",
@@ -214,7 +215,7 @@ ciudad:"Houston"
 {
 id:1010,
 grupo:"F",
-local:"Holanda",
+local:"paises bajos",
 visitante:"Japón",
 fecha:"2026-06-14T14:00:00",
 ciudad:"Dallas"
@@ -439,7 +440,7 @@ ciudad:"Kansas City"
 {
 id:1035,
 grupo:"F",
-local:"Holanda",
+local:"paises bajos",
 visitante:"Suecia",
 fecha:"2026-06-20T11:00:00",
 ciudad:"Houston"
@@ -647,7 +648,7 @@ ciudad:"Dallas"
 id:1058,
 grupo:"F",
 local:"Túnez",
-visitante:"Holanda",
+visitante:"paises bajos",
 fecha:"2026-06-25T17:00:00",
 ciudad:"Kansas City"
 },
