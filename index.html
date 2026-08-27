@@ -2,7 +2,6 @@
 <html lang="es">
 
 <head>
-
   <meta charset="UTF-8">
 
   <meta
@@ -10,27 +9,168 @@
     content="width=device-width, initial-scale=1.0"
   >
 
-  <title>
-    WHORE NIGHT PARTY | Boletos
-  </title>
+  <title>WHORE NIGHT PARTY | Boletos</title>
 
   <link
     rel="stylesheet"
     href="styles.css"
   >
 
+  <style>
+
+    /* ======================================================
+       CASILLA DE ACEPTACIÓN DE REGLAS
+       ====================================================== */
+
+    .rules-check {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-top: 18px;
+      padding: 15px;
+      background: #090909;
+      border: 1px solid #3c2608;
+      border-radius: 12px;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .rules-check input {
+      width: 20px;
+      height: 20px;
+      min-width: 20px;
+      margin-top: 2px;
+      cursor: pointer;
+      accent-color: #e20b0b;
+    }
+
+    .rules-check span {
+      color: #d7d7d7;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .rules-check strong {
+      color: #d9a441;
+    }
+
+
+    /* ======================================================
+       AVISO DE PAGO PENDIENTE
+       ====================================================== */
+
+    .payment-pending {
+      margin-top: 18px;
+      padding: 18px;
+      border-radius: 12px;
+      background: rgba(255, 210, 26, 0.08);
+      border: 1px solid #8f7600;
+      color: #f1f1f1;
+      text-align: left;
+    }
+
+    .payment-pending-title {
+      color: #ffd21a;
+      font-size: 17px;
+      font-weight: 900;
+      margin-bottom: 10px;
+    }
+
+    .payment-pending p {
+      margin: 7px 0;
+      color: #ccc;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .payment-users {
+      margin-top: 12px;
+      padding: 12px;
+      background: #050505;
+      border-radius: 9px;
+      border: 1px solid #292929;
+    }
+
+    .payment-users div {
+      color: #d9a441;
+      font-weight: 800;
+      margin: 5px 0;
+    }
+
+
+    /* ======================================================
+       PALABRA OCULTA
+       ====================================================== */
+
+    .keyword.locked {
+      color: #ffd21a;
+      font-size: 25px;
+      letter-spacing: 1px;
+    }
+
+
+    /* ======================================================
+       INFORMACIÓN DE COVER
+       ====================================================== */
+
+    .cover-info {
+      margin-top: 15px;
+      padding: 15px;
+      background: #090909;
+      border: 1px solid #292929;
+      border-radius: 10px;
+      text-align: left;
+    }
+
+    .cover-info p {
+      color: #ccc;
+      font-size: 13px;
+      line-height: 1.5;
+      margin: 6px 0;
+    }
+
+
+    /* ======================================================
+       RESPONSIVE
+       ====================================================== */
+
+    @media (max-width: 600px) {
+
+      .rules-check {
+        padding: 13px;
+      }
+
+      .rules-check span {
+        font-size: 12px;
+      }
+
+      .payment-pending {
+        padding: 14px;
+      }
+
+      .payment-pending-title {
+        font-size: 15px;
+      }
+
+    }
+
+  </style>
+
 </head>
 
 
 <body>
 
+  <!-- ====================================================
+       EFECTO DE FONDO
+       ==================================================== -->
 
   <div class="bg-glow"></div>
 
 
-  <!-- ================================================= -->
-  <!-- IMAGEN DEL EVENTO -->
-  <!-- ================================================= -->
+  <!-- ====================================================
+       IMAGEN PRINCIPAL DEL EVENTO
+       ==================================================== -->
 
   <header class="hero">
 
@@ -43,31 +183,26 @@
   </header>
 
 
-  <!-- ================================================= -->
-  <!-- CONTENIDO -->
-  <!-- ================================================= -->
+  <!-- ====================================================
+       CONTENIDO PRINCIPAL
+       ==================================================== -->
 
   <main class="container">
 
 
-    <!-- ================================================= -->
-    <!-- INTRO -->
-    <!-- ================================================= -->
+    <!-- ==================================================
+         PRESENTACIÓN DEL EVENTO
+         ================================================== -->
 
     <section class="card intro">
 
-
-      
-
+     
       <h1>
-        OBTÉN TU BOLETO
+        Obtén tu boleto
       </h1>
 
-
       <p class="subtitle">
-
         23 de octubre de 2026 · Halloween
-
       </p>
 
 
@@ -75,32 +210,15 @@
 
       <div class="prices">
 
-
         <div>
-
-          <strong>
-            $150
-          </strong>
-
-          <span>
-            PREVENTA
-          </span>
-
+          <strong>$150</strong>
+          <span>PREVENTA</span>
         </div>
 
-
         <div>
-
-          <strong>
-            $200
-          </strong>
-
-          <span>
-            COVER
-          </span>
-
+          <strong>$200</strong>
+          <span>COVER</span>
         </div>
-
 
       </div>
 
@@ -110,34 +228,30 @@
       <div class="notice">
 
         <strong>
-          TU PALABRA CLAVE ES PERSONAL
+          Tu palabra clave es personal.
         </strong>
 
-
         <p>
-
-          Tu palabra clave será única y quedará
-          registrada en nuestro sistema.
-          No la compartas con ninguna otra persona.
-
+          No la compartas.
+          Si se detecta una palabra clave duplicada
+          o utilizada por otra persona, las entradas
+          relacionadas podrán ser canceladas.
         </p>
 
       </div>
-
 
     </section>
 
 
 
-    <!-- ================================================= -->
-    <!-- DATOS -->
-    <!-- ================================================= -->
+    <!-- ==================================================
+         FORMULARIO
+         ================================================== -->
 
     <section class="card">
 
-
       <h2>
-        1. TUS DATOS
+        1. Tus datos
       </h2>
 
 
@@ -147,11 +261,8 @@
         <!-- NOMBRE -->
 
         <label for="nombre">
-
           Nombre o nombre completo
-
         </label>
-
 
         <input
           id="nombre"
@@ -165,17 +276,17 @@
 
 
 
-        <!-- TIPO -->
+        <!-- TIPO DE BOLETO -->
 
         <label>
-
-          ¿QUÉ OPCIÓN DESEAS?
-
+          ¿Qué opción deseas?
         </label>
 
 
         <div class="options">
 
+
+          <!-- PREVENTA -->
 
           <label class="option">
 
@@ -185,7 +296,6 @@
               value="preventa"
               checked
             >
-
 
             <span>
 
@@ -203,6 +313,8 @@
 
 
 
+          <!-- COVER -->
+
           <label class="option">
 
             <input
@@ -210,7 +322,6 @@
               name="tipo"
               value="cover"
             >
-
 
             <span>
 
@@ -231,25 +342,24 @@
 
 
 
-        <!-- ================================================= -->
-        <!-- PAGO PREVENTA -->
-        <!-- ================================================= -->
+        <!-- ==================================================
+             PAGO PREVENTA
+             ================================================== -->
 
         <div
           id="pagoBox"
           class="payment-box"
         >
 
-
           <label>
-
             Forma de pago de la preventa
-
           </label>
 
 
           <div class="options two">
 
+
+            <!-- TRANSFERENCIA -->
 
             <label class="option">
 
@@ -259,7 +369,6 @@
                 value="transferencia"
                 checked
               >
-
 
               <span>
 
@@ -273,6 +382,8 @@
 
 
 
+            <!-- EFECTIVO -->
+
             <label class="option">
 
               <input
@@ -280,7 +391,6 @@
                 name="metodoPago"
                 value="efectivo"
               >
-
 
               <span>
 
@@ -298,10 +408,15 @@
 
           <p class="small">
 
-            Después de registrar la preventa,
-            tu estado aparecerá como
-            <b>PENDIENTE</b> hasta que el
-            administrador confirme el pago.
+            Tu preventa quedará pendiente hasta que
+            nuestro equipo confirme el pago.
+
+            <br><br>
+
+            <b>
+              La palabra clave NO se mostrará
+              hasta confirmar el pago.
+            </b>
 
           </p>
 
@@ -310,201 +425,146 @@
 
 
 
-        <!-- ================================================= -->
-        <!-- REGLAS -->
-        <!-- ================================================= -->
+        <!-- ==================================================
+             REGLAS
+             ================================================== -->
 
-        <div
-          class="rules"
-          style="margin-top:20px"
-        >
-
+        <div class="rules">
 
           <h3>
-            REGLAS Y CONFIRMACIÓN
+            Reglas de acceso
           </h3>
-
-
-          <p>
-
-            Antes de generar tu palabra clave
-            debes confirmar que aceptas las
-            siguientes reglas:
-
-          </p>
 
 
           <ol>
 
-
             <li>
-
               Debes enseñar tu palabra clave
               mediante una captura de pantalla
-              o directamente desde esta página
-              al momento de ingresar.
-
+              o directamente desde esta página.
             </li>
-
 
             <li>
-
-              Tu palabra clave es personal.
-              No puedes compartirla con otra persona.
-
+              No puedes compartir tu palabra clave
+              con ninguna otra persona.
             </li>
-
 
             <li>
-
-              Si compartes tu palabra clave
-              con otra persona, tu entrada podrá
-              ser cancelada automáticamente y
-              no podrás ingresar al evento.
-
+              Si compartes tu palabra clave,
+              tu entrada quedará automáticamente
+              cancelada y no podrás ingresar al evento.
             </li>
-
 
             <li>
-
-              Ninguna palabra clave se puede
-              repetir.
-
+              Ninguna palabra clave se repite.
             </li>
-
 
             <li>
-
-              Si se detectan dos o más personas
-              utilizando la misma palabra clave,
-              las entradas relacionadas serán
-              canceladas.
-
+              Si encontramos dos personas con la
+              misma palabra clave, las dos entradas
+              relacionadas serán canceladas.
             </li>
-
 
             <li>
-
-              Debes conservar tu palabra clave
-              hasta el día del evento.
-
+              Para la entrada Cover se aplican
+              exactamente las mismas reglas.
             </li>
-
 
             <li>
-
-              Para la opción COVER, llega al evento,
-              muestra tu palabra clave y el personal
-              te indicará los siguientes pasos.
-
+              Si tu entrada es Cover, no necesitas
+              informar previamente sobre el pago.
+              Solo llega al evento y enseña tu palabra
+              clave.
             </li>
-
 
             <li>
-
-              Para el COVER no necesitas informar
-              previamente sobre el pago.
-              Al llegar, muestra tu palabra clave
-              y nosotros te indicaremos el
-              procedimiento correspondiente.
-
+              Nuestro personal te indicará los
+              siguientes pasos al llegar.
             </li>
-
 
             <li>
-
-              Lleva tu teléfono con batería y,
-              si es necesario, conexión a Internet
-              para poder mostrar tu palabra clave
-              directamente desde la página.
-
+              Si es necesario consultar tu entrada
+              en ese momento, lleva tu teléfono con
+              batería y datos móviles o Internet.
             </li>
-
 
             <li>
-
-              El COVER tiene un costo de
-              <b>$200</b> en el evento.
-
+              El Cover tiene un costo de
+              <strong>$200</strong>
+              y se paga directamente en el evento.
             </li>
-
 
             <li>
-
-              Si cuentas con una PREVENTA de
-              <b>$150</b>, el pago deberá haber
-              sido confirmado previamente por
-              el administrador.
-
+              Si realizaste la Preventa por
+              <strong>$150</strong>,
+              deberás esperar a que nuestro equipo
+              confirme el pago antes de que se
+              muestre tu palabra clave.
             </li>
-
 
           </ol>
-
-
-          <!-- CONFIRMACIÓN -->
-
-          <label
-            class="option"
-            style="margin-top:18px"
-          >
-
-            <input
-              type="checkbox"
-              id="aceptarReglas"
-              required
-            >
-
-
-            <span>
-
-              <b>
-                Confirmo que leí y acepto
-                todas las reglas de acceso.
-              </b>
-
-
-              <small>
-
-                Entiendo que mi palabra clave
-                es personal y no debo compartirla.
-
-              </small>
-
-            </span>
-
-          </label>
-
 
         </div>
 
 
 
-        <!-- ================================================= -->
-        <!-- BOTÓN -->
-        <!-- ================================================= -->
+        <!-- ==================================================
+             ACEPTACIÓN OBLIGATORIA
+             ================================================== -->
+
+        <label
+          class="rules-check"
+          for="aceptarReglas"
+        >
+
+          <input
+            type="checkbox"
+            id="aceptarReglas"
+            name="aceptarReglas"
+          >
+
+          <span>
+
+            <strong>
+              Confirmo que leí y acepto todas las
+              reglas de acceso.
+            </strong>
+
+            <br>
+
+            Entiendo que mi palabra clave es personal,
+            que no debo compartirla y que una palabra
+            clave replicada puede ocasionar la
+            cancelación de las entradas relacionadas.
+
+          </span>
+
+        </label>
+
+
+
+        <!-- ==================================================
+             BOTÓN
+             ================================================== -->
 
         <button
           id="submitBtn"
           class="primary"
           type="submit"
         >
-
           GENERAR MI PALABRA CLAVE
-
         </button>
 
 
       </form>
 
-
     </section>
 
 
 
-    <!-- ================================================= -->
-    <!-- RESULTADO -->
-    <!-- ================================================= -->
+    <!-- ==================================================
+         RESULTADO DEL BOLETO
+         ================================================== -->
 
     <section
       id="resultCard"
@@ -512,162 +572,198 @@
     >
 
 
+      <!-- ESTADO -->
+
       <div
         id="statusBadge"
         class="status pending"
       >
-
-        PENDIENTE
-
+        PAGO PENDIENTE
       </div>
 
 
+      <!-- TÍTULO -->
+
       <h2 id="resultTitle">
-
-        TU PALABRA CLAVE
-
+        PALABRA CLAVE PENDIENTE
       </h2>
 
 
+      <!-- PALABRA -->
+
       <div
         id="keyword"
-        class="keyword"
+        class="keyword locked"
+      >
+        🔒 PENDIENTE
+      </div>
+
+
+      <!-- TEXTO DINÁMICO -->
+
+      <p id="resultText">
+        Tu boleto está siendo registrado.
+      </p>
+
+
+      <!-- ==================================================
+           AVISO DE PAGO PREVENTA
+           ================================================== -->
+
+      <div
+        id="paymentPendingBox"
+        class="payment-pending hidden"
       >
 
-        --------
+        <div class="payment-pending-title">
+
+          🔒 PAGO PENDIENTE
+
+        </div>
+
+
+        <p>
+
+          Tu solicitud de preventa por
+          <strong>$150</strong>
+          fue registrada correctamente.
+
+        </p>
+
+
+        <p>
+
+          La palabra clave todavía
+          <strong>no está disponible</strong>.
+
+        </p>
+
+
+        <p>
+
+          La palabra clave se mostrará
+          únicamente cuando nuestro equipo
+          confirme que el pago fue recibido.
+
+        </p>
+
+
+        <p>
+
+          Para realizar tu pago por transferencia
+          o efectivo, envía mensaje a alguno de
+          estos usuarios:
+
+        </p>
+
+
+        <div class="payment-users">
+
+          <div>
+            @al3xander_ct
+          </div>
+
+          <div>
+            @o_morenx
+          </div>
+
+          <div>
+            @mxian__247
+          </div>
+
+          <div>
+            @hxo_sxnnt
+          </div>
+
+        </div>
+
+
+        <p>
+
+          Cuando el pago sea confirmado,
+          tu estado cambiará a
+          <strong>PAGADO</strong>
+          y podrás consultar tu palabra clave.
+
+        </p>
 
       </div>
 
 
-      <p id="resultText"></p>
 
-
-
-      <!-- ================================================= -->
-      <!-- REGLAS DESPUÉS DE GENERAR -->
-      <!-- ================================================= -->
+      <!-- ==================================================
+           REGLAS DEL BOLETO
+           ================================================== -->
 
       <div class="rules">
 
-
         <h3>
-          REGLAS DE ACCESO
+          Reglas de acceso
         </h3>
 
 
         <ol>
 
-
           <li>
-
             Conserva tu palabra clave hasta
             el día del evento.
-
           </li>
 
-
           <li>
-
-            Debes mostrar tu palabra clave
-            mediante una captura o directamente
-            desde esta página.
-
+            Puedes mostrarla mediante una captura
+            de pantalla o directamente desde esta página.
           </li>
 
-
           <li>
-
             No compartas tu palabra clave
-            con ninguna otra persona.
-
+            con otra persona.
           </li>
-
 
           <li>
-
-            Tu palabra clave es personal
-            e intransferible.
-
+            Si compartes tu palabra clave,
+            tu entrada podrá ser cancelada.
           </li>
-
 
           <li>
-
-            Ninguna palabra clave se repite.
-
+            Ninguna palabra clave debe repetirse.
           </li>
-
 
           <li>
-
-            Si se detectan palabras clave
-            replicadas, las entradas relacionadas
-            serán canceladas.
-
+            Si se detecta una palabra clave replicada,
+            las entradas relacionadas podrán ser canceladas.
           </li>
-
 
           <li>
-
-            Para COVER, solamente llega,
-            muestra tu palabra clave y espera
-            las indicaciones del personal.
-
+            Para Cover, no necesitas informar previamente
+            sobre el pago.
           </li>
-
 
           <li>
-
-            No necesitas informar previamente
-            sobre el pago del COVER.
-
+            Llega, enseña tu palabra clave y nuestro
+            personal te indicará los siguientes pasos.
           </li>
-
 
           <li>
-
-            Lleva tu teléfono con batería y
-            conexión a Internet si necesitas
-            consultar tu palabra clave desde
-            la página.
-
+            Lleva tu teléfono con batería y datos
+            o Internet si necesitas consultar tu entrada.
           </li>
-
-
-          <li>
-
-            El COVER tiene un costo de
-            <b>$200</b> en el evento.
-
-          </li>
-
-
-          <li>
-
-            Si tu entrada es PREVENTA,
-            el precio es de <b>$150</b> y el
-            pago debe estar confirmado antes
-            del ingreso.
-
-          </li>
-
 
         </ol>
-
 
       </div>
 
 
-      <!-- ACTUALIZAR -->
+
+      <!-- ==================================================
+           ACTUALIZAR ESTADO
+           ================================================== -->
 
       <button
         id="refreshBtn"
         class="secondary"
         type="button"
       >
-
         ACTUALIZAR ESTADO
-
       </button>
 
 
@@ -675,35 +771,27 @@
 
 
 
-    <!-- ================================================= -->
-    <!-- INFORMACIÓN -->
-    <!-- ================================================= -->
+    <!-- ==================================================
+         INFORMACIÓN
+         ================================================== -->
 
     <section class="card">
 
-
       <h2>
-        INFORMACIÓN
+        Información
       </h2>
 
-
       <p>
-
         Ubicación secreta.
         La ubicación será revelada únicamente
         a los asistentes.
-
       </p>
 
-
       <p>
-
         <b>
           Patrocinado por ALFA 4 INNOVACIÓN
         </b>
-
       </p>
-
 
     </section>
 
@@ -712,9 +800,9 @@
 
 
 
-  <!-- ================================================= -->
-  <!-- FOOTER -->
-  <!-- ================================================= -->
+  <!-- ====================================================
+       FOOTER
+       ==================================================== -->
 
   <footer>
 
@@ -725,9 +813,9 @@
 
 
 
-  <!-- ================================================= -->
-  <!-- JAVASCRIPT CORRECTO -->
-  <!-- ================================================= -->
+  <!-- ====================================================
+       JAVASCRIPT
+       ==================================================== -->
 
   <script
     type="module"
