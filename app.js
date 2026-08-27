@@ -1,12 +1,6 @@
 // ============================================================
 // WHORE NIGHT PARTY
-// APP.JS
-// Firebase Realtime Database
-// ============================================================
-
-
-// ============================================================
-// FIREBASE
+// app.js
 // ============================================================
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
@@ -17,7 +11,6 @@ import {
     push,
     set,
     get,
-    update,
     query,
     orderByChild,
     equalTo
@@ -119,7 +112,7 @@ const aceptarReglas =
 
 
 // ============================================================
-// VARIABLE DEL BOLETO ACTUAL
+// VARIABLES
 // ============================================================
 
 let ticketIdActual = null;
@@ -128,7 +121,7 @@ let palabraActual = null;
 
 
 // ============================================================
-// CAMBIAR PREVENTA / COVER
+// MOSTRAR / OCULTAR PAGO
 // ============================================================
 
 function actualizarTipo() {
@@ -146,13 +139,21 @@ function actualizarTipo() {
     if (tipo.value === "preventa") {
 
         if (pagoBox) {
-            pagoBox.classList.remove("hidden");
+
+            pagoBox.classList.remove(
+                "hidden"
+            );
+
         }
 
     } else {
 
         if (pagoBox) {
-            pagoBox.classList.add("hidden");
+
+            pagoBox.classList.add(
+                "hidden"
+            );
+
         }
 
     }
@@ -161,11 +162,13 @@ function actualizarTipo() {
 
 
 // ============================================================
-// ESCUCHAR CAMBIO DE TIPO
+// CAMBIO PREVENTA / COVER
 // ============================================================
 
 document
-    .querySelectorAll('input[name="tipo"]')
+    .querySelectorAll(
+        'input[name="tipo"]'
+    )
     .forEach((radio) => {
 
         radio.addEventListener(
@@ -184,7 +187,7 @@ actualizarTipo();
 
 
 // ============================================================
-// GENERAR PALABRA CANDIDATA
+// GENERADOR DE PALABRA
 // ============================================================
 
 function generarPalabraCandidata() {
@@ -260,13 +263,16 @@ function generarPalabraCandidata() {
 
 
 // ============================================================
-// COMPROBAR SI LA PALABRA YA EXISTE
+// COMPROBAR SI PALABRA EXISTE
 // ============================================================
 
 async function palabraExiste(palabra) {
 
     const ticketsRef =
-        ref(db, "tickets");
+        ref(
+            db,
+            "tickets"
+        );
 
 
     const palabraQuery =
@@ -278,7 +284,9 @@ async function palabraExiste(palabra) {
 
 
     const snapshot =
-        await get(palabraQuery);
+        await get(
+            palabraQuery
+        );
 
 
     return snapshot.exists();
@@ -292,19 +300,25 @@ async function palabraExiste(palabra) {
 
 async function generarPalabraUnica() {
 
-    for (let intento = 0; intento < 100; intento++) {
+    for (
+        let intento = 0;
+        intento < 100;
+        intento++
+    ) {
 
-        const palabra =
+        const candidata =
             generarPalabraCandidata();
 
 
         const existe =
-            await palabraExiste(palabra);
+            await palabraExiste(
+                candidata
+            );
 
 
         if (!existe) {
 
-            return palabra;
+            return candidata;
 
         }
 
@@ -464,7 +478,7 @@ async function registrarBoleto(event) {
     if (!aceptarReglas.checked) {
 
         alert(
-            "Debes leer y aceptar las reglas de acceso antes de generar tu palabra clave."
+            "Debes leer y aceptar las reglas antes de continuar."
         );
 
         aceptarReglas.focus();
@@ -475,13 +489,13 @@ async function registrarBoleto(event) {
 
 
     // --------------------------------------------------------
-    // BLOQUEAR BOTÓN
+    // DESACTIVAR BOTÓN
     // --------------------------------------------------------
 
     submitBtn.disabled = true;
 
     submitBtn.textContent =
-        "GENERANDO PALABRA...";
+        "REGISTRANDO...";
 
 
     try {
@@ -496,7 +510,7 @@ async function registrarBoleto(event) {
 
 
         // ====================================================
-        // PRECIO Y ESTADO
+        // ESTADOS
         // ====================================================
 
         let precio;
@@ -535,21 +549,20 @@ async function registrarBoleto(event) {
         // FECHA
         // ====================================================
 
-        const ahora =
-            new Date();
-
-
         const fechaRegistro =
-            ahora.toISOString();
+            new Date().toISOString();
 
 
         // ====================================================
-        // CREAR ID FIREBASE
+        // CREAR TICKET
         // ====================================================
 
         const nuevoTicket =
             push(
-                ref(db, "tickets")
+                ref(
+                    db,
+                    "tickets"
+                )
             );
 
 
@@ -611,7 +624,7 @@ async function registrarBoleto(event) {
 
 
         // ====================================================
-        // GUARDAR EN EL NAVEGADOR
+        // GUARDAR EN LOCALSTORAGE
         // ====================================================
 
         localStorage.setItem(
@@ -626,17 +639,16 @@ async function registrarBoleto(event) {
         );
 
 
-        // Variables actuales
-
         ticketIdActual =
             ticketId;
+
 
         palabraActual =
             palabra;
 
 
         // ====================================================
-        // MOSTRAR BOLETO
+        // MOSTRAR RESULTADO
         // ====================================================
 
         mostrarResultado(
@@ -685,14 +697,6 @@ function mostrarResultado(boleto) {
     );
 
 
-    if (keywordElement) {
-
-        keywordElement.textContent =
-            boleto.palabra || "--------";
-
-    }
-
-
     actualizarEstadoVisual(
         boleto
     );
@@ -714,7 +718,7 @@ function mostrarResultado(boleto) {
 
 
 // ============================================================
-// ESTADO VISUAL
+// ACTUALIZAR ESTADO VISUAL
 // ============================================================
 
 function actualizarEstadoVisual(boleto) {
@@ -745,6 +749,14 @@ function actualizarEstadoVisual(boleto) {
             "CANCELADO";
 
 
+        if (keywordElement) {
+
+            keywordElement.textContent =
+                "--------";
+
+        }
+
+
         if (resultTitle) {
 
             resultTitle.textContent =
@@ -756,7 +768,7 @@ function actualizarEstadoVisual(boleto) {
         if (resultText) {
 
             resultText.textContent =
-                "Esta palabra clave fue cancelada y no permite el acceso al evento.";
+                "Esta entrada fue cancelada y la palabra clave no permite el acceso al evento.";
 
         }
 
@@ -781,6 +793,14 @@ function actualizarEstadoVisual(boleto) {
 
         statusBadge.textContent =
             "UTILIZADO";
+
+
+        if (keywordElement) {
+
+            keywordElement.textContent =
+                boleto.palabra || "--------";
+
+        }
 
 
         if (resultTitle) {
@@ -810,11 +830,8 @@ function actualizarEstadoVisual(boleto) {
 
     if (
         boleto.tipo === "preventa" &&
-        (
-            boleto.estado === "pagado" ||
-            boleto.estado === "aprobado" ||
-            boleto.estadoPago === "pagado"
-        )
+        boleto.estado === "pagado" &&
+        boleto.estadoPago === "pagado"
     ) {
 
         statusBadge.classList.add(
@@ -825,10 +842,20 @@ function actualizarEstadoVisual(boleto) {
             "PAGADO";
 
 
+        // AQUÍ SE REVELA LA PALABRA
+
+        if (keywordElement) {
+
+            keywordElement.textContent =
+                boleto.palabra;
+
+        }
+
+
         if (resultTitle) {
 
             resultTitle.textContent =
-                "PREVENTA APROBADA";
+                "TU PALABRA CLAVE";
 
         }
 
@@ -836,7 +863,76 @@ function actualizarEstadoVisual(boleto) {
         if (resultText) {
 
             resultText.textContent =
-                "Tu pago de $150 ha sido confirmado. Conserva tu palabra clave y muéstrala al ingresar.";
+                "Tu pago de $150 fue confirmado. Conserva esta palabra clave y muéstrala al ingresar al evento.";
+
+        }
+
+
+        return;
+
+    }
+
+
+    // ========================================================
+    // PREVENTA PENDIENTE
+    // ========================================================
+
+    if (
+        boleto.tipo === "preventa"
+    ) {
+
+        statusBadge.classList.add(
+            "pending"
+        );
+
+        statusBadge.textContent =
+            "PAGO PENDIENTE";
+
+
+        // NO SE REVELA LA PALABRA
+
+        if (keywordElement) {
+
+            keywordElement.textContent =
+                "🔒 PENDIENTE";
+
+        }
+
+
+        if (resultTitle) {
+
+            resultTitle.textContent =
+                "PALABRA CLAVE PENDIENTE";
+
+        }
+
+
+        if (resultText) {
+
+            resultText.innerHTML = `
+                <strong>Tu solicitud de preventa por $150 fue registrada correctamente.</strong>
+                <br><br>
+
+                La palabra clave todavía no está disponible.
+                <br><br>
+
+                <strong>La palabra clave se mostrará automáticamente cuando nuestro equipo confirme tu pago.</strong>
+                <br><br>
+
+                Para realizar tu pago por transferencia o efectivo,
+                envía mensaje a alguno de estos usuarios:
+                <br><br>
+
+                <strong>@al3xander_ct</strong><br>
+                <strong>@o_morenx</strong><br>
+                <strong>@mxian__247</strong><br>
+                <strong>@hxo_sxnnt</strong>
+                <br><br>
+
+                Una vez confirmado el pago, tu estado cambiará a
+                <strong>PAGADO</strong>
+                y podrás consultar tu palabra clave desde esta página.
+            `;
 
         }
 
@@ -862,6 +958,16 @@ function actualizarEstadoVisual(boleto) {
             "PENDIENTE A PAGAR";
 
 
+        // COVER SÍ MUESTRA PALABRA
+
+        if (keywordElement) {
+
+            keywordElement.textContent =
+                boleto.palabra;
+
+        }
+
+
         if (resultTitle) {
 
             resultTitle.textContent =
@@ -872,8 +978,25 @@ function actualizarEstadoVisual(boleto) {
 
         if (resultText) {
 
-            resultText.textContent =
-                "No necesitas informar nada previamente sobre el pago. Al llegar al evento, muestra tu palabra clave y nuestro personal te indicará los siguientes pasos. El cover es de $200.";
+            resultText.innerHTML = `
+                Tu palabra clave ha sido registrada correctamente.
+                <br><br>
+
+                <strong>No necesitas informar previamente sobre el pago de tu entrada.</strong>
+                <br><br>
+
+                Al llegar al evento, muestra tu palabra clave
+                mediante una captura o directamente desde esta página.
+                Nuestro personal te indicará los siguientes pasos.
+                <br><br>
+
+                El cover tiene un costo de
+                <strong>$200</strong>.
+                <br><br>
+
+                Lleva tu teléfono con batería y datos o Internet
+                por si necesitas consultar tu palabra clave.
+            `;
 
         }
 
@@ -884,7 +1007,7 @@ function actualizarEstadoVisual(boleto) {
 
 
     // ========================================================
-    // PREVENTA PENDIENTE
+    // ESTADO DESCONOCIDO
     // ========================================================
 
     statusBadge.classList.add(
@@ -895,10 +1018,18 @@ function actualizarEstadoVisual(boleto) {
         "PENDIENTE";
 
 
+    if (keywordElement) {
+
+        keywordElement.textContent =
+            "--------";
+
+    }
+
+
     if (resultTitle) {
 
         resultTitle.textContent =
-            "TU PALABRA CLAVE";
+            "BOLETO PENDIENTE";
 
     }
 
@@ -906,7 +1037,7 @@ function actualizarEstadoVisual(boleto) {
     if (resultText) {
 
         resultText.textContent =
-            "Tu preventa de $150 está registrada y pendiente de confirmación. Cuando el administrador confirme el pago, tu entrada aparecerá como PAGADO.";
+            "Tu boleto está registrado y pendiente de actualización.";
 
     }
 
@@ -914,7 +1045,7 @@ function actualizarEstadoVisual(boleto) {
 
 
 // ============================================================
-// CARGAR BOLETO GUARDADO
+// CARGAR BOLETO DEL USUARIO
 // ============================================================
 
 async function cargarBoletoActual() {
@@ -942,7 +1073,9 @@ async function cargarBoletoActual() {
 
 
         const snapshot =
-            await get(ticketRef);
+            await get(
+                ticketRef
+            );
 
 
         if (!snapshot.exists()) {
@@ -967,6 +1100,7 @@ async function cargarBoletoActual() {
         ticketIdActual =
             id;
 
+
         palabraActual =
             boleto.palabra;
 
@@ -989,7 +1123,7 @@ async function cargarBoletoActual() {
 
 
 // ============================================================
-// ACTUALIZAR ESTADO DEL BOLETO
+// ACTUALIZAR ESTADO
 // ============================================================
 
 async function actualizarEstado() {
@@ -1033,13 +1167,15 @@ async function actualizarEstado() {
 
 
         const snapshot =
-            await get(ticketRef);
+            await get(
+                ticketRef
+            );
 
 
         if (!snapshot.exists()) {
 
             alert(
-                "No encontramos tu boleto."
+                "No encontramos tu boleto en Firebase."
             );
 
             return;
@@ -1053,6 +1189,7 @@ async function actualizarEstado() {
 
         ticketIdActual =
             id;
+
 
         palabraActual =
             boleto.palabra;
@@ -1122,7 +1259,7 @@ if (refreshBtn) {
 
 
 // ============================================================
-// CARGAR AL INICIAR
+// CARGAR BOLETO AL ABRIR LA PÁGINA
 // ============================================================
 
 document.addEventListener(
